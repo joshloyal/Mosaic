@@ -5,6 +5,9 @@ from skimage import color
 from image_vis import image_io
 
 
+__all__ = ['array_to_hsv', 'get_hsv']
+
+
 def hsv_features_single(image, agg_func=np.mean, background=None):
     image = np.asarray(image, dtype=np.uint8)
     hsv_image = color.rgb2hsv(image)
@@ -59,12 +62,12 @@ def array_to_hsv(image_list, mode='mean', background=None, n_jobs=1):
     return np.vstack(result)
 
 
-def mean_hsv(image_column,
-             data,
-             mode='mean',
-             background=None,
-             image_directory='',
-             n_jobs=-1):
+def get_hsv(image_column,
+            data,
+            mode='mean',
+            background=None,
+            image_directory='',
+            n_jobs=-1):
     images = image_io.load_images(
         data[image_column],
         image_dir=image_directory,

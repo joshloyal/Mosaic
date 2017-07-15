@@ -6,6 +6,7 @@ import glob
 import os
 import itertools
 
+import pandas as pd
 import numpy as np
 from joblib import Parallel, delayed
 from PIL import Image as pil_image
@@ -224,3 +225,10 @@ def load_from_directory(image_directory,
                        random_state=random_state,
                        n_jobs=n_jobs,
                        dtype=dtype)
+
+
+def directory_to_dataframe(image_directory):
+    image_files = list(itertools.chain.from_iterable(
+        [image_glob(image_directory, ext) for ext in image_extensions]))
+    image_files = [f.split(image_directory + os.path.sep)[1] for f in image_files]
+    return pd.DataFrame({'image_path': image_files})

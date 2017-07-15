@@ -6,6 +6,7 @@ import numpy as np
 from PIL import Image as pil_image
 
 from image_vis import image_io
+from image_vis import features
 
 
 def images_to_sprite(images):
@@ -14,16 +15,14 @@ def images_to_sprite(images):
     Parameters
     ----------
     images : list
-        A List of PIL Image objects.
+        A List of PIL Image objects. All images must be
+        the same shape NxWx3.
 
     Returns
     -------
     A properly shaped NxWx3 PIL Image with any necessary padding.
     """
     n_samples = len(images)
-
-    #features = hsv_features(images, background='white', n_jobs=-1)
-    #image_order = np.argsort(features[:, 0])
 
     if n_samples < 1:
         raise ValueError('Cannot create a sprite image from zero images.')
@@ -58,6 +57,7 @@ def images_to_sprite(images):
 
 def directory_to_sprites(image_directory,
                          n_samples=None,
+                         target_size=None,
                          random_state=123,
                          n_jobs=1):
     """Creates a sprite image along with any necessary padding.
@@ -87,6 +87,7 @@ def directory_to_sprites(image_directory,
     """
     images = image_io.load_from_directory(
         image_directory,
+        target_size=target_size,
         n_samples=n_samples,
         dtype=np.float32,
         as_image=True,
@@ -95,49 +96,12 @@ def directory_to_sprites(image_directory,
 
     return images_to_sprite(images)
 
-def list_to_sprites(image_files,
-                    image_dir='',
-                    n_samples=None,
-                    as_image=False,
-                    n_jobs=1):
-    """Creates a sprite image along with any necessary padding.
-
-    Parameters
-    ----------
-    image_files : list of str
-        List of paths to images.
-
-    image_dir : str
-        The common directory where all the images are located.
-
-    n_samples : int (default=None)
-        The number of random sample images to use. If None, then
-        all images are loaded. This can be memory expensive.
-
-    as_image : bool (default=False)
-        Whether to return a PIL image otherwise return a numpy array.
-
-    n_jobs : int (default=1)
-        The number of parallel workers to use for loading
-        the image files.
-
-    Returns
-    -------
-    A properly shaped NxWx3 image with any necessary padding.
-    """
-    images = image_io.load_images(image_files,
-                                  image_dir=image_dir,
-                                  n_samples=n_samples,
-                                  dtype=np.float32,
-                                  n_jobs=n_jobs)
-
-    return images_to_sprite(images, as_image=as_image)
-
 
 def column_to_sprites(image_column,
-                      sort_by=None,
                       data=None,
+                      sort_by=None,
                       image_directory='',
+                      target_size=None,
                       n_samples=None,
                       random_state=123,
                       n_jobs=1):
@@ -148,11 +112,11 @@ def column_to_sprites(image_column,
     image_column : str
         Column name corresponding to the images.
 
-    sort_by : str
-        Column to sort by.
-
     data : pd.DataFrame
         Pandas dataframe holding the dataset.
+
+    sort_by : str
+        Column to sort by.
 
     image_directory : str (default='')
         The location of the image files on disk.
@@ -180,13 +144,21 @@ def column_to_sprites(image_column,
                            replace=False,
                            random_state=random_state)
 
-    if sort_by is not None:
+    if (sort_by is not None and
+            sort_by not in features.ColorFeatures.all_features()):
         data = data.sort_values(by=sort_by, ascending=True)
 
     images = image_io.load_images(
         data[image_column],
         image_dir=image_directory,
         as_image=True,
+        target_size=target_size,
         n_jobs=n_jobs)
+
+    if sort_by in features.ColorFeatures.all_features():
+        hsv = features.array_to_hsv(images, n_jobs=n_jobs)
+        sort_by_values = hsv[:, features.ColorFeatures.feature_index(sort_by)]
+        sorted_indices = np.argsort(sort_by_values)
+        images = [images[i] for i in sorted_indices]
 
     return images_to_sprite(images)
