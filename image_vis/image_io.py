@@ -227,8 +227,32 @@ def load_from_directory(image_directory,
                        dtype=dtype)
 
 
-def directory_to_dataframe(image_directory):
+def directory_to_dataframe(image_dir):
+    """Create a pandas.DataFrame containing the path to all images in
+    a directory.
+
+    The pandas.DataFrame has a single column `image_path`, which contains
+    the paths to the various images. The paths are relative to the given
+    `image_dir`. For example, a directory of the form
+        - image_dir
+            |-- image1.jpg
+            |-- image2.jpg
+    would result in the following  single column dataframe:
+        pandas.DataFrame({'image_path': ['image1.jpg', 'image2.jpg']}).
+
+    Parameters
+    ----------
+    image_dir : str
+        The directory to search of images and place their paths
+        in a dataframe.
+
+    Returns
+    -------
+    pandas.DataFrame
+        A dataframe containing the image paths.
+    """
     image_files = list(itertools.chain.from_iterable(
-        [image_glob(image_directory, ext) for ext in image_extensions]))
-    image_files = [f.split(image_directory + os.path.sep)[1] for f in image_files]
+        [image_glob(image_dir, ext) for ext in image_extensions]))
+    image_files = [f.split(image_dir + os.path.sep)[1] for
+                   f in image_files]
     return pd.DataFrame({'image_path': image_files})

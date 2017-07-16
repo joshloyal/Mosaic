@@ -117,7 +117,7 @@ def mosaic_plot(image_col,
         n_jobs=n_jobs)
 
     if sort_by in features.ColorFeatures.all_features():
-        hsv = features.array_to_hsv(images, n_jobs=n_jobs)
+        hsv = features.extract_hsv_stats(images, n_jobs=n_jobs)
         sort_by_values = hsv[:, features.ColorFeatures.feature_index(sort_by)]
         sorted_indices = np.argsort(sort_by_values)
         images = [images[i] for i in sorted_indices]

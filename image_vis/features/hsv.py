@@ -5,10 +5,32 @@ from skimage import color
 from image_vis import image_io
 
 
-__all__ = ['array_to_hsv', 'get_hsv']
+__all__ = ['extract_hsv_stats']
 
 
 def hsv_features_single(image, agg_func=np.mean, background=None):
+    """For each hsv value (hue, saturation, value) calculate
+    an aggregate statistic (`agg_func`) of that value for a image.
+
+    Parameters
+    ----------
+    image : np.array of shape (width, height, 3)
+        The image over which the aggregte hsv statistics
+        are calculated.
+    agg_func : numpy ufunc (default=np.mean)
+        A function that will calculate a scalar statistic
+        over the given values.
+    background : array-like of shape [3,] (default=None)
+        The background color value for each hsv channel.
+        These values will be masked out in the calculation.
+        If None, then all values are included in the statistics
+        calculation.
+
+    Returns
+    -------
+    tuple (h_mean, s_mean, v_mean):
+        The statitics for each channel.
+    """
     image = np.asarray(image, dtype=np.uint8)
     hsv_image = color.rgb2hsv(image)
 
@@ -38,9 +60,33 @@ def hsv_features_single(image, agg_func=np.mean, background=None):
     return h_mean, s_mean, v_mean
 
 
-def array_to_hsv(image_list, mode='mean', background=None, n_jobs=1):
-    """A useful ordering tool is the HSV values of an RGB image.
-    In particular, H (hue) will order by color.
+def extract_hsv_stats(image_list, mode='mean', background=None, n_jobs=1):
+    """Extract aggregate statistics in the HSV domain of an RGB image.
+
+    A useful ordering tool is the HSV values of an RGB image.
+    In particular, arranging images by H (hue) will order them by
+    their color along the color spectrum. This function extracts
+    a scalar statistic for each HSV channel of every image in an array.
+
+    Parameters
+    ----------
+    image_list : list of lenth [n_samples,]
+        A list of PIL.Images.
+    mode : str {'mean', 'median'} (default='mean')
+        The statistic to extract for each channel.
+    background : array-like of shape [3,] or str {'white', 'black']
+                 (default=None)
+        The background color value for each hsv channel.
+        These values will be masked out in the calculation.
+        If None, then all values are included in the statistics
+        calculation.
+    n_jobs : int (default=1)
+        Number of jobs to run in parallel.
+
+    Returns
+    -------
+    np.array of shape [n_samples, 3]
+        An array containing the hsv statistics for each channel.
     """
     if background == 'white':
         background = np.array([0, 0, 1], dtype=np.uint8)
@@ -60,19 +106,3 @@ def array_to_hsv(image_list, mode='mean', background=None, n_jobs=1):
         for image in image_list)
 
     return np.vstack(result)
-
-
-def get_hsv(image_col,
-            data,
-            mode='mean',
-            background=None,
-            image_dir='',
-            n_jobs=-1):
-    images = image_io.load_images(
-        data[image_col],
-        image_dir=image_dir,
-        as_image=True,
-        n_jobs=n_jobs)
-
-    return array_to_hsv(
-        images, mode=mode, background=background, n_jobs=n_jobs)

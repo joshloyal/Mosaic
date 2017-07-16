@@ -63,11 +63,12 @@ def image_histogram(image_col,
         data = data.sample(n_samples, replace=True, random_state=random_state)
 
     if y in features.ColorFeatures.all_features():
-        hsv = features.get_hsv(
-            image_col,
-            data=data,
+        images = image_io.load_images(
+            data[image_col],
             image_dir=image_dir,
+            as_image=True,
             n_jobs=n_jobs)
+        hsv = features.extract_hsv_stats(images, n_jobs=n_jobs)
         data[y] = hsv[:, features.ColorFeatures.feature_index(y)]
 
     data['x_bin'] = pd.cut(data[x], n_bins, labels=False)
