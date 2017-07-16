@@ -4,31 +4,33 @@ from __future__ import unicode_literals
 
 import numpy as np
 import pandas as pd
+from PIL import Image as pil_image
 
 from image_vis import image_io
 
 
-def scatter_plot(image_column,
-                 x_column,
-                 y_column,
+__all__ = ['scatter_plot']
+
+
+def scatter_plot(image_col,
+                 x, y,
                  data,
                  thumbnail_size=5,
-                 image_directory='',
+                 image_dir='',
                  n_samples=None,
                  fig_size=(500, 500),
                  random_state=123):
-    """Create an image scatter plot based on columns `y_column` vs
-    `x_column.
+    """Create an image scatter plot based on columns `y` vs `x`.
 
     Parameters
     ----------
-    image_column : str
+    image_col : str
         Name of the column pointing to the image files
 
-    x_column : str
+    x : str
         Name of the column to use for the x-axis.
 
-    y_column : str
+    y : str
         Name of the column to use for the y-axis
 
     data : pandas.DataFrame
@@ -37,7 +39,7 @@ def scatter_plot(image_column,
     thumbnail_size : int
         The size of each image in the scatter plot.
 
-    image_directory : str
+    image_dir : str
         Path to the directory holding the images.
 
     n_samples : int (default=None)
@@ -53,8 +55,8 @@ def scatter_plot(image_column,
     if n_samples is not None and n_samples < len(data):
         data = data.sample(n_samples, replace=True, random_state=random_state)
 
-    x_var = data[x_column].values
-    y_var = data[y_column].values
+    x_var = data[x].values
+    y_var = data[y].values
 
     # scale the variables between 0-1
     x_var /= np.abs(x_var).max()
@@ -69,8 +71,8 @@ def scatter_plot(image_column,
     background_color = (255, 255, 255)
     canvas = pil_image.new('RGB', fig_size, background_color)
 
-    for i in range(len(data[image_column])):
-        image_loc = image_path(data[image_column].iloc[i], image_directory)
+    for i in range(len(data[image_col])):
+        image_loc = image_io.image_path(data[image_col].iloc[i], image_dir)
         point_img = pil_image.open(image_loc).convert('RGB')
         point_img = point_img.resize(
             (thumbnail_size, thumbnail_size), pil_image.LANCZOS)

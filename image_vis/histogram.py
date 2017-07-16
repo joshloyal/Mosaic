@@ -6,31 +6,35 @@ import pandas as pd
 from PIL import Image as pil_image
 
 from image_vis import image_io
+from image_vis import features
 
 
-def histogram(image_column,
-              x_column,
-              y_column,
-              data,
-              n_bins=100,
-              thumbnail_size=50,
-              image_directory='',
-              n_samples=None,
-              fig_size=(1000, 1000),
-              random_state=123):
-    """Create an image histogram binned by the `x_column`.
+__all__ = ['image_histogram']
+
+
+def image_histogram(image_col,
+                    x, y,
+                    data,
+                    n_bins=30,
+                    thumbnail_size=50,
+                    image_dir='',
+                    n_samples=None,
+                    fig_size=(500, 500),
+                    random_state=123,
+                    n_jobs=1):
+    """Create an image histogram binned by the `x`.
 
     Parameters
     ----------
-    image_column : str
+    image_col : str
         Name of the column pointing to the image files
 
-    x_column : str
+    x : str
         Name of the column bin the x-axis.
 
-    y_column : str
+    y : str
         Name of the column to sort they values. No sorting is performed
-        if y_column is None.
+        if y is None.
 
     data : pandas.DataFrame
         The dataframe where both columns are present.
@@ -38,7 +42,7 @@ def histogram(image_column,
     thumbnail_size : int
         The size of each image in the histogram.
 
-    image_directory : str
+    image_dir: str
         Path to the directory holding the images.
 
     n_samples : int (default=None)
@@ -49,12 +53,24 @@ def histogram(image_column,
 
     random_state : int
         The seed to use for the random number generator.
+
+    n_jobs : int (default=1)
+        The number of parallel workers to use for loading
+        the image files.
     """
     data = data.copy()
     if n_samples is not None and n_samples < len(data):
         data = data.sample(n_samples, replace=True, random_state=random_state)
 
-    data['x_bin'] = pd.cut(data[x_column], n_bins, labels=False)
+    if y in features.ColorFeatures.all_features():
+        hsv = features.get_hsv(
+            image_col,
+            data=data,
+            image_dir=image_dir,
+            n_jobs=n_jobs)
+        data[y] = hsv[:, features.ColorFeatures.feature_index(y)]
+
+    data['x_bin'] = pd.cut(data[x], n_bins, labels=False)
     bin_max = data.groupby('x_bin').size().max()
 
     px_w = thumbnail_size * n_bins
@@ -70,8 +86,8 @@ def histogram(image_column,
         tmp = data[data.x_bin == item].copy()
 
         # sort y values if present
-        if y_column is not None:
-            tmp.sort_values(by=y_column, ascending=False, inplace=True)
+        if y is not None:
+            tmp.sort_values(by=y, ascending=False, inplace=True)
 
         tmp.reset_index(drop=True, inplace=True)
 
@@ -79,7 +95,7 @@ def histogram(image_column,
         x_coord = thumbnail_size * item
 
         for i in range(len(tmp.index)):
-            image_loc = image_io.image_path(tmp[image_column].iloc[i], image_directory)
+            image_loc = image_io.image_path(tmp[image_col].iloc[i], image_dir)
             thumbnail = pil_image.open(image_loc)
             thumbnail.thumbnail(thumbnail_px, pil_image.BICUBIC)
             canvas.paste(thumbnail, (x_coord, y_coord))

@@ -9,8 +9,11 @@ from image_vis import image_io
 from image_vis import features
 
 
-def images_to_sprite(images):
-    """Creates a sprite image along with any necessary padding.
+__all__ = ['mosaic_plot']
+
+
+def images_to_mosaic(images):
+    """Creates a mosaic plot along with any necessary padding.
 
     Parameters
     ----------
@@ -29,16 +32,16 @@ def images_to_sprite(images):
 
     image_width, image_height = images[0].size
 
-    # sprite image should be sqrt(n_samples) x sqrt(n_samples). If
+    # mosaic plot should be sqrt(n_samples) x sqrt(n_samples). If
     # n_samples is not a perfect square then we pad with white images.
     table_size = int(np.ceil(np.sqrt(n_samples)))
 
     # create the new image. Hard-code the background color to white
     background_color = (255, 255, 255)
-    sprite_size = (table_size * image_width, table_size * image_height)
-    sprite_image = pil_image.new('RGB', sprite_size, background_color)
+    mosaic_size = (table_size * image_width, table_size * image_height)
+    mosaic_image = pil_image.new('RGB', mosaic_size, background_color)
 
-    # loop through the images and add them to the sprite image
+    # loop through the images and add them to the mosaic plot
     for index, image in enumerate(images):
         row_index = int(index / table_size)
         column_index = index % table_size
@@ -50,66 +53,24 @@ def images_to_sprite(images):
         lower = upper + image_height
         bounding_box = (left, upper, right, lower)
 
-        sprite_image.paste(image, bounding_box)
+        mosaic_image.paste(image, bounding_box)
 
-    return sprite_image
-
-
-def directory_to_sprites(image_directory,
-                         n_samples=None,
-                         target_size=None,
-                         random_state=123,
-                         n_jobs=1):
-    """Creates a sprite image along with any necessary padding.
-
-    Parameters
-    ----------
-    image_directory : str
-        Path to the directory holding the images.
-
-    n_samples : int (default=None)
-        The number of random sample images to use. If None, then
-        all images are loaded. This can be memory expensive.
-
-    as_image : bool (default=False)
-        Whether to return a PIL image otherwise return a numpy array.
-
-    random_state : int (default=123)
-        The seed to use for the random sampling.
-
-    n_jobs : int (default=1)
-        The number of parallel workers to use for loading
-        the image files.
-
-    Returns
-    -------
-    A properly shaped NxWx3 image with any necessary padding.
-    """
-    images = image_io.load_from_directory(
-        image_directory,
-        target_size=target_size,
-        n_samples=n_samples,
-        dtype=np.float32,
-        as_image=True,
-        random_state=random_state,
-        n_jobs=n_jobs)
-
-    return images_to_sprite(images)
+    return mosaic_image
 
 
-def column_to_sprites(image_column,
-                      data=None,
-                      sort_by=None,
-                      image_directory='',
-                      target_size=None,
-                      n_samples=None,
-                      random_state=123,
-                      n_jobs=1):
-    """Creates a sprite image along with any necessary padding.
+def mosaic_plot(image_col,
+                data=None,
+                sort_by=None,
+                image_dir='',
+                target_size=None,
+                n_samples=None,
+                random_state=123,
+                n_jobs=1):
+    """Creates a mosaic plot along with any necessary padding.
 
     Parameters
     ----------
-    image_column : str
+    image_col : str
         Column name corresponding to the images.
 
     data : pd.DataFrame
@@ -118,7 +79,7 @@ def column_to_sprites(image_column,
     sort_by : str
         Column to sort by.
 
-    image_directory : str (default='')
+    image_dir : str (default='')
         The location of the image files on disk.
 
     n_samples : int (default=None)
@@ -149,8 +110,8 @@ def column_to_sprites(image_column,
         data = data.sort_values(by=sort_by, ascending=True)
 
     images = image_io.load_images(
-        data[image_column],
-        image_dir=image_directory,
+        data[image_col],
+        image_dir=image_dir,
         as_image=True,
         target_size=target_size,
         n_jobs=n_jobs)
@@ -161,4 +122,4 @@ def column_to_sprites(image_column,
         sorted_indices = np.argsort(sort_by_values)
         images = [images[i] for i in sorted_indices]
 
-    return images_to_sprite(images)
+    return images_to_mosaic(images)

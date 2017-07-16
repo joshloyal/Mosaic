@@ -62,15 +62,15 @@ def array_to_hsv(image_list, mode='mean', background=None, n_jobs=1):
     return np.vstack(result)
 
 
-def get_hsv(image_column,
+def get_hsv(image_col,
             data,
             mode='mean',
             background=None,
-            image_directory='',
+            image_dir='',
             n_jobs=-1):
     images = image_io.load_images(
-        data[image_column],
-        image_dir=image_directory,
+        data[image_col],
+        image_dir=image_dir,
         as_image=True,
         n_jobs=n_jobs)
 
