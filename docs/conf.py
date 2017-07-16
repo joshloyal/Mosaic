@@ -21,6 +21,8 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 import sphinx_bootstrap_theme
+import matplotlib as mpl
+mpl.use('Agg')
 
 # -- General configuration ------------------------------------------------
 
@@ -40,10 +42,17 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.autosummary',
+    'matplotlib.sphinxext.plot_directive',
     'numpydoc']
 
 autosummary_generate = True
 numpydoc_show_class_members = False
+
+# Include the example source for plots in the API docs
+plot_include_source = True
+plot_formats = [("png", 90)]
+plot_html_show_formats = False
+plot_html_show_source_link = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

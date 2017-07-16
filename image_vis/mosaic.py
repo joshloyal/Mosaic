@@ -99,6 +99,13 @@ def mosaic_plot(image_col,
     Returns
     -------
     A properly shaped NxWx3 image with any necessary padding.
+
+    Examples
+    --------
+
+    Create a mosaic plot.
+
+    .. plot:: ../examples/mosaic_plot.py
     """
     if n_samples is not None and n_samples < len(data):
         data = data.sample(n=n_samples,
