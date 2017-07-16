@@ -62,14 +62,14 @@ def image_histogram(image_col,
     if n_samples is not None and n_samples < len(data):
         data = data.sample(n_samples, replace=True, random_state=random_state)
 
-    if y in features.ColorFeatures.all_features():
+    if y in features.HSVFeatures.all_features():
         images = image_io.load_images(
             data[image_col],
             image_dir=image_dir,
             as_image=True,
             n_jobs=n_jobs)
         hsv = features.extract_hsv_stats(images, n_jobs=n_jobs)
-        data[y] = hsv[:, features.ColorFeatures.feature_index(y)]
+        data[y] = hsv[:, features.HSVFeatures.feature_index(y)]
 
     data['x_bin'] = pd.cut(data[x], n_bins, labels=False)
     bin_max = data.groupby('x_bin').size().max()

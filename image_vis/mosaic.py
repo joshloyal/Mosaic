@@ -106,7 +106,7 @@ def mosaic_plot(image_col,
                            random_state=random_state)
 
     if (sort_by is not None and
-            sort_by not in features.ColorFeatures.all_features()):
+            sort_by not in features.HSVFeatures.all_features()):
         data = data.sort_values(by=sort_by, ascending=True)
 
     images = image_io.load_images(
@@ -116,9 +116,9 @@ def mosaic_plot(image_col,
         target_size=target_size,
         n_jobs=n_jobs)
 
-    if sort_by in features.ColorFeatures.all_features():
+    if sort_by in features.HSVFeatures.all_features():
         hsv = features.extract_hsv_stats(images, n_jobs=n_jobs)
-        sort_by_values = hsv[:, features.ColorFeatures.feature_index(sort_by)]
+        sort_by_values = hsv[:, features.HSVFeatures.feature_index(sort_by)]
         sorted_indices = np.argsort(sort_by_values)
         images = [images[i] for i in sorted_indices]
 
