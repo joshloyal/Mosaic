@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import numpy as np
 from PIL import Image as pil_image
 
+from image_vis import contexts
 from image_vis import image_io
 from image_vis import features
 
@@ -62,7 +63,7 @@ def mosaic_plot(image_col,
                 data=None,
                 sort_by=None,
                 image_dir='',
-                target_size=None,
+                target_size=(100, 100),
                 n_samples=None,
                 random_state=123,
                 n_jobs=1):
@@ -115,6 +116,9 @@ def mosaic_plot(image_col,
     if (sort_by is not None and
             sort_by not in features.HSVFeatures.all_features()):
         data = data.sort_values(by=sort_by, ascending=True)
+
+    if not image_dir:
+        image_dir = contexts.get_image_dir()
 
     images = image_io.load_images(
         data[image_col],

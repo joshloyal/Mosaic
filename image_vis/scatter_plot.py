@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image as pil_image
 
+from image_vis import contexts
 from image_vis import image_io
 
 
@@ -15,7 +16,7 @@ __all__ = ['scatter_plot']
 def scatter_plot(image_col,
                  x, y,
                  data,
-                 thumbnail_size=5,
+                 thumbnail_size=15,
                  image_dir='',
                  n_samples=None,
                  fig_size=(500, 500),
@@ -50,10 +51,20 @@ def scatter_plot(image_col,
 
     random_state : int
         The seed to use for the random number generator.
+
+    Examples
+    --------
+
+    Create a scatter plot.
+
+    .. plot:: ../examples/scatter_plot.py
     """
     data = data.copy()
     if n_samples is not None and n_samples < len(data):
         data = data.sample(n_samples, replace=True, random_state=random_state)
+
+    if not image_dir:
+        image_dir = contexts.get_image_dir()
 
     x_var = data[x].values
     y_var = data[y].values

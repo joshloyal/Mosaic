@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import pandas as pd
 from PIL import Image as pil_image
 
+from image_vis import contexts
 from image_vis import image_io
 from image_vis import features
 
@@ -57,10 +58,20 @@ def image_histogram(image_col,
     n_jobs : int (default=1)
         The number of parallel workers to use for loading
         the image files.
+
+    Examples
+    --------
+
+    Create an image histogram.
+
+    .. plot:: ../examples/image_histogram.py
     """
     data = data.copy()
     if n_samples is not None and n_samples < len(data):
         data = data.sample(n_samples, replace=True, random_state=random_state)
+
+    if not image_dir:
+        image_dir = contexts.get_image_dir()
 
     if y in features.HSVFeatures.all_features():
         images = image_io.load_images(

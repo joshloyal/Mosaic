@@ -3,3 +3,4 @@ from image_vis.histogram import *
 from image_vis.mosaic import *
 from image_vis.features import *
 from image_vis import image_io
+from image_vis.contexts import image_dir, get_image_dir

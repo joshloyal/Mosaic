@@ -10,6 +10,7 @@ __all__ = ['HSVFeatures', 'extract_hsv_stats']
 
 class HSVFeatures(object):
     """Enum used within the code-base to refer to HSV features."""
+    #: HUE value
     HUE = '__hue__'
     SATURATION = '__saturation__'
     VALUE = '__value__'

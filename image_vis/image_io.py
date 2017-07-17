@@ -11,6 +11,10 @@ import numpy as np
 from joblib import Parallel, delayed
 from PIL import Image as pil_image
 
+from image_vis import contexts
+from image_vis import features as feature_lib
+
+
 image_extensions = {'jpg', 'jpeg', 'png'}
 
 
@@ -227,7 +231,9 @@ def load_from_directory(image_directory,
                        dtype=dtype)
 
 
-def directory_to_dataframe(image_dir):
+def directory_to_dataframe(image_dir='',
+                           features=None,
+                           n_jobs=-1):
     """Create a pandas.DataFrame containing the path to all images in
     a directory.
 
@@ -245,14 +251,37 @@ def directory_to_dataframe(image_dir):
     image_dir : str
         The directory to search of images and place their paths
         in a dataframe.
+    features : list or None
+        A list of features to include in the dataframe. The default (None)
+        includes no additional features.
 
     Returns
     -------
     pandas.DataFrame
         A dataframe containing the image paths.
     """
+    if not image_dir:
+        image_dir = contexts.get_image_dir()
+
     image_files = list(itertools.chain.from_iterable(
         [image_glob(image_dir, ext) for ext in image_extensions]))
     image_files = [f.split(image_dir + os.path.sep)[1] for
                    f in image_files]
-    return pd.DataFrame({'image_path': image_files})
+    data = pd.DataFrame({'image_path': image_files})
+
+    if features:
+        if set(features) & set(feature_lib.HSVFeatures.all_features()):
+            images = load_images(
+                data['image_path'],
+                image_dir=image_dir,
+                as_image=True,
+                n_jobs=n_jobs)
+            hsv = feature_lib.extract_hsv_stats(images, n_jobs=n_jobs)
+            for feature in features:
+                feature_idx = feature_lib.HSVFeatures.feature_index(feature)
+                data[feature] = hsv[:, feature_idx]
+        else:
+            raise ValueError('Unknown features.')
+
+    return data
+
