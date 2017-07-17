@@ -8,6 +8,7 @@ from PIL import Image as pil_image
 
 from image_vis import contexts
 from image_vis import image_io
+from image_vis import plots
 
 
 __all__ = ['scatter_plot']
@@ -20,7 +21,8 @@ def scatter_plot(image_col,
                  image_dir='',
                  n_samples=None,
                  fig_size=(500, 500),
-                 random_state=123):
+                 random_state=123,
+                 **kwargs):
     """Create an image scatter plot based on columns `y` vs `x`.
 
     Parameters
@@ -100,4 +102,4 @@ def scatter_plot(image_col,
         )
         canvas.paste(point_img, bounding_box)
 
-    return canvas
+    return plots.pillow_to_matplotlib(canvas, **kwargs)

@@ -8,6 +8,7 @@ from PIL import Image as pil_image
 from image_vis import contexts
 from image_vis import image_io
 from image_vis import features
+from image_vis import plots
 
 
 __all__ = ['mosaic_plot']
@@ -60,13 +61,14 @@ def images_to_mosaic(images):
 
 
 def mosaic_plot(image_col,
-                data=None,
+                data,
                 sort_by=None,
                 image_dir='',
                 target_size=(100, 100),
                 n_samples=None,
                 random_state=123,
-                n_jobs=1):
+                n_jobs=1,
+                **kwargs):
     """Creates a mosaic plot along with any necessary padding.
 
     Parameters
@@ -133,4 +135,5 @@ def mosaic_plot(image_col,
         sorted_indices = np.argsort(sort_by_values)
         images = [images[i] for i in sorted_indices]
 
-    return images_to_mosaic(images)
+    mosaic = images_to_mosaic(images)
+    return plots.pillow_to_matplotlib(mosaic, **kwargs)

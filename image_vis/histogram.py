@@ -8,6 +8,7 @@ from PIL import Image as pil_image
 from image_vis import contexts
 from image_vis import image_io
 from image_vis import features
+from image_vis import plots
 
 
 __all__ = ['image_histogram']
@@ -22,7 +23,8 @@ def image_histogram(image_col,
                     n_samples=None,
                     fig_size=(500, 500),
                     random_state=123,
-                    n_jobs=1):
+                    n_jobs=1,
+                    **kwargs):
     """Create an image histogram binned by the `x`.
 
     Parameters
@@ -116,4 +118,4 @@ def image_histogram(image_col,
     if fig_size:
         canvas.thumbnail(fig_size, pil_image.BICUBIC)
 
-    return canvas
+    return plots.pillow_to_matplotlib(canvas, **kwargs)
