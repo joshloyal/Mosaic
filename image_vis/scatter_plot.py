@@ -102,4 +102,7 @@ def scatter_plot(image_col,
         )
         canvas.paste(point_img, bounding_box)
 
+    if fig_size:
+        canvas.thumbnail(fig_size, pil_image.BICUBIC)
+
     return plots.pillow_to_matplotlib(canvas, **kwargs)

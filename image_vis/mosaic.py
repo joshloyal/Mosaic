@@ -65,6 +65,7 @@ def mosaic_plot(image_col,
                 sort_by=None,
                 image_dir='',
                 target_size=(100, 100),
+                fig_size=(500, 500),
                 n_samples=None,
                 random_state=123,
                 n_jobs=1,
@@ -109,6 +110,10 @@ def mosaic_plot(image_col,
     Create a mosaic plot.
 
     .. plot:: ../examples/mosaic_plot.py
+
+    Create a mosaic plot with custom ordering on MNIST.
+
+    .. plot:: ../examples/mosaic_plot_custom_order.py
     """
     if n_samples is not None and n_samples < len(data):
         data = data.sample(n=n_samples,
@@ -136,4 +141,8 @@ def mosaic_plot(image_col,
         images = [images[i] for i in sorted_indices]
 
     mosaic = images_to_mosaic(images)
+
+    if fig_size:
+        canvas.thumbnail(fig_size, pil_image.BICUBIC)
+
     return plots.pillow_to_matplotlib(mosaic, **kwargs)
