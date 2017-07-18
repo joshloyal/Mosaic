@@ -143,6 +143,6 @@ def mosaic_plot(image_col,
     mosaic = images_to_mosaic(images)
 
     if fig_size:
-        canvas.thumbnail(fig_size, pil_image.BICUBIC)
+        mosaic.thumbnail(fig_size, pil_image.BICUBIC)
 
     return plots.pillow_to_matplotlib(mosaic, **kwargs)
