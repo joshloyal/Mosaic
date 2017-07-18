@@ -35,4 +35,4 @@ Contexts
 .. autosummary::
    :toctree: generated/
 
-   image_dir
+   plotting_context

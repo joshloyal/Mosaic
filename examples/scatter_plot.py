@@ -4,13 +4,14 @@ Scatter Plot
 """
 import numpy as np
 
-import image_vis
+import image_vis as ivs
+
 
 rng = np.random.RandomState(123)
 
-with image_vis.image_dir('../image_vis/datasets/rothko_images'):
-    data = image_vis.image_io.directory_to_dataframe()
+image_dir, data = ivs.load_dataset('rothko')
+
+with ivs.plotting_context(image_col='image_path', image_dir=image_dir):
     data['x'] = rng.randn(data.shape[0])
     data['y'] = rng.randn(data.shape[0])
-    scatter = image_vis.scatter_plot(
-        'image_path', x='x', y='y', data=data)
+    ivs.scatter_plot(x='x', y='y', data=data)

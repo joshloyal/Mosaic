@@ -14,11 +14,11 @@ from image_vis import plots
 __all__ = ['scatter_plot']
 
 
-def scatter_plot(image_col,
-                 x, y,
+def scatter_plot(x, y,
                  data,
                  thumbnail_size=15,
                  image_dir='',
+                 image_col=None,
                  n_samples=None,
                  fig_size=(500, 500),
                  random_state=123,
@@ -67,6 +67,9 @@ def scatter_plot(image_col,
 
     if not image_dir:
         image_dir = contexts.get_image_dir()
+
+    if not image_col:
+        image_col = contexts.get_image_col()
 
     x_var = data[x].values
     y_var = data[y].values

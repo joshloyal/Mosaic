@@ -60,10 +60,10 @@ def images_to_mosaic(images):
     return mosaic_image
 
 
-def mosaic_plot(image_col,
-                data,
-                sort_by=None,
+def mosaic_plot(data,
+                image_col=None,
                 image_dir='',
+                sort_by=None,
                 target_size=(100, 100),
                 fig_size=(500, 500),
                 n_samples=None,
@@ -74,7 +74,7 @@ def mosaic_plot(image_col,
 
     Parameters
     ----------
-    image_col : str
+    image_col : str or None
         Column name corresponding to the images.
 
     data : pd.DataFrame
@@ -126,6 +126,9 @@ def mosaic_plot(image_col,
 
     if not image_dir:
         image_dir = contexts.get_image_dir()
+
+    if not image_col:
+        image_col = contexts.get_image_col()
 
     images = image_io.load_images(
         data[image_col],

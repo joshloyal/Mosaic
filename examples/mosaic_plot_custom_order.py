@@ -4,10 +4,15 @@ Mosaic Plot with Custom Ordering
 """
 import pandas as pd
 
-import image_vis
+import image_vis as ivs
 
 
-with image_vis.image_dir('../image_vis/datasets/mnist'):
-    data = pd.read_csv('mnist_data.csv')
-    mosaic = image_vis.mosaic_plot(
-        'image_path', data=data, sort_by='label', n_samples=625)
+data = pd.read_csv('mnist_data.csv')
+
+context = dict(
+    image_col='image_path',
+    image_dir='../image_vis/datasets/mnist'
+)
+
+with ivs.plotting_context(**context):
+    ivs.mosaic_plot(data=data, sort_by='label', n_samples=625)

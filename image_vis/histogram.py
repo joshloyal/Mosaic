@@ -14,12 +14,12 @@ from image_vis import plots
 __all__ = ['image_histogram']
 
 
-def image_histogram(image_col,
-                    x, y,
+def image_histogram(x, y,
                     data,
                     n_bins=30,
-                    thumbnail_size=50,
+                    image_col=None,
                     image_dir='',
+                    thumbnail_size=50,
                     n_samples=None,
                     fig_size=(500, 500),
                     random_state=123,
@@ -74,6 +74,9 @@ def image_histogram(image_col,
 
     if not image_dir:
         image_dir = contexts.get_image_dir()
+
+    if not image_col:
+        image_col = contexts.get_image_col()
 
     if y in features.HSVFeatures.all_features():
         images = image_io.load_images(
