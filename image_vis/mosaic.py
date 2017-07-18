@@ -113,7 +113,7 @@ def mosaic_plot(data,
 
     Create a mosaic plot with custom ordering on MNIST.
 
-    .. plot:: ../examples/mosaic_plot_custom_order.py
+    .. plot:: ../examples/mosaic_plot_mnist.py
     """
     if n_samples is not None and n_samples < len(data):
         data = data.sample(n=n_samples,
