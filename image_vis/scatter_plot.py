@@ -136,7 +136,7 @@ def scatter_plot(x, y,
     Examples
     --------
 
-    Create a scatter plot.
+    Create a scatter plot with hue labels.
 
     .. plot:: ../examples/scatter_plot.py
     """
