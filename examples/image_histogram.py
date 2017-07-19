@@ -13,4 +13,5 @@ image_dir, data = ivs.load_dataset('rothko')
 
 with ivs.plotting_context(image_col='image_path', image_dir=image_dir):
     data['x'] = rng.randn(data.shape[0])
-    ivs.image_histogram(x='x', y=ivs.HSVFeatures.SATURATION, data=data)
+    ivs.image_histogram(x='x', y=ivs.HSVFeatures.SATURATION, data=data,
+                        figsize=(15, 15), n_jobs=-1)
