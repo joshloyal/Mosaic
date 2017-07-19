@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 
-def deaxis(fig=None, ax=None):
+def remove_axis(fig=None, ax=None):
     if fig is None and ax is None:
         axes = plt.gcf().axes
     elif fig is not None:
@@ -15,9 +15,11 @@ def deaxis(fig=None, ax=None):
     for ax_i in axes:
         ax_i.set_axis_off()
 
+    return ax
+
 
 def pillow_to_matplotlib(image, **kwargs):
     f, ax = plt.subplots(**kwargs)
     fig = plt.imshow(image)
-    deaxis(fig, ax)
+    remove_axis(fig, ax)
     return fig
