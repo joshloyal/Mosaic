@@ -3,9 +3,12 @@ from __future__ import division
 from __future__ import unicode_literals
 
 import numpy as np
-import pandas as pd
-from PIL import Image as pil_image
 
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+from matplotlib import pyplot as plt
+import seaborn as sns
+
+from image_vis import features
 from image_vis import contexts
 from image_vis import image_io
 from image_vis import plots
@@ -14,22 +17,87 @@ from image_vis import plots
 __all__ = ['scatter_plot']
 
 
-def scatter_plot(x, y,
-                 data,
-                 thumbnail_size=15,
-                 image_dir='',
-                 image_col=None,
-                 n_samples=None,
-                 fig_size=(500, 500),
-                 random_state=123,
-                 **kwargs):
-    """Create an image scatter plot based on columns `y` vs `x`.
+def minmax_scale(x):
+    """Scale data so it is in the range (0, 1)"""
+    data_min = np.min(x)
+    data_max = np.max(x)
+    data_range = data_max - data_min
+
+    # don't divide by zero
+    if data_range == 0.:
+        data_range = 1.
+
+    x -= data_min
+    x /= data_range
+
+
+def images_to_scatter(images, x_var, y_var, threshold=None, alpha=0.9,
+                      **kwargs):
+    """Creates a scatter plot.
 
     Parameters
     ----------
-    image_col : str
-        Name of the column pointing to the image files
+    images : np.array of shape [n_samples, n_width, n_height, n_channels]
+        A 4D array holding the images to plot.
 
+    x_var : np.array of shape [n_samples,]
+        The variable to plot on the x-axis
+
+    y_var : np.array of shape [n_samples,]
+        The variable to plot on the y-axis
+
+    threshold : float
+        In order to avoid clutter only one point in a ball of
+        radius `threshold` is displayed. Note that features
+        are re-scaled to lie on the unit square [0, 1] x [0, 1].
+
+    alpha : float
+        The alpha level for each image.
+
+    Returns
+    -------
+    ...
+    """
+    # scale the variables between 0-1
+    minmax_scale(x_var)
+    minmax_scale(y_var)
+    xy = np.c_[x_var, y_var]
+
+    fig, ax = plt.subplots(**kwargs)
+
+    # something big. points lie in [0, 1] x [0, 1].
+    shown_points = np.array([[1., 1.]])
+
+    for i in range(len(images)):
+        dist = np.sum((xy[i] - shown_points) ** 2, axis=1)
+        if threshold and np.min(dist) < threshold:
+            continue
+        shown_points = np.r_[shown_points, [xy[i]]]
+
+        ab = AnnotationBbox(OffsetImage(images[i], alpha=alpha),
+                            xy[i, :],
+                            frameon=False, xycoords='data')
+        ax.add_artist(ab)
+
+    return plots.remove_axis(ax=ax)
+
+
+def scatter_plot(x, y,
+                 data,
+                 image_dir='',
+                 image_col=None,
+                 n_samples=None,
+                 target_size=(20, 20),
+                 hue=None,
+                 threshold=None,
+                 alpha=0.9,
+                 random_state=123,
+                 n_jobs=1,
+                 **kwargs):
+    """Create an image scatter plot based on columns `x` vs. `y`.
+
+    Parameters
+    ----------
     x : str
         Name of the column to use for the x-axis.
 
@@ -39,20 +107,31 @@ def scatter_plot(x, y,
     data : pandas.DataFrame
         The dataframe where both columns are present.
 
-    thumbnail_size : int
-        The size of each image in the scatter plot.
-
     image_dir : str
         Path to the directory holding the images.
 
-    n_samples : int (default=None)
-        The number of samples do downsample the dataset to.
+    image_col : str
+        Name of the column containing the image files.
 
-    fig_size : tuple
-        The (width_px, height_px) of the final image in pixels.
+    n_samples : int (default=None)
+        If not None, then randomly downsample the dataset
+        to `n_sample` images.
+
+    target_size : int
+        The size of each image in the scatter plot.
+
+    threshold : float (default=None)
+        In order to avoid clutter only one point in a ball of
+        radius `threshold` is displayed. Note that features
+        are re-scaled to lie on the unit square [0, 1] x [0, 1].
+        The default of None means all points are displayed.
 
     random_state : int
         The seed to use for the random number generator.
+
+    n_jobs : int
+        The number of parallel jobs used to load the
+        images from disk.
 
     Examples
     --------
@@ -71,41 +150,24 @@ def scatter_plot(x, y,
     if not image_col:
         image_col = contexts.get_image_col()
 
+    # get co-variates
     x_var = data[x].values
     y_var = data[y].values
 
-    # scale the variables between 0-1
-    x_var /= np.abs(x_var).max()
-    y_var /= np.abs(y_var).max()
+    # load images
+    images = image_io.load_images(
+        data[image_col],
+        image_dir=image_dir,
+        as_image=False,
+        target_size=target_size,
+        n_jobs=n_jobs)
 
-    # now stretch them to fit the canvas
-    fig_width, fig_height = fig_size
-    padding = 0
-    x_var = np.floor(x_var * (fig_width / 2 - padding) + fig_width / 2)
-    y_var = np.floor(y_var * (fig_height / 2 - padding) + fig_height / 2)
+    # TODO (seaborn is only required for a color palette. Remove this)
+    if hue is not None:
+        values, value_map = np.unique(data[hue], return_inverse=True)
+        palette = sns.husl_palette(len(values))
+        images = [features.color_image(img, hue=palette[val]) for
+                  img, val in zip(images, value_map)]
 
-    background_color = (255, 255, 255)
-    canvas = pil_image.new('RGB', fig_size, background_color)
-
-    for i in range(len(data[image_col])):
-        image_loc = image_io.image_path(data[image_col].iloc[i], image_dir)
-        point_img = pil_image.open(image_loc).convert('RGB')
-        point_img = point_img.resize(
-            (thumbnail_size, thumbnail_size), pil_image.LANCZOS)
-        point_width, point_height = point_img.size
-
-
-        width_pad = 0 if not point_width % 2 else 1
-        height_pad = 0 if not point_height % 2 else 1
-        bounding_box = (
-            int(x_var[i] - point_width // 2),
-            int(y_var[i] - point_height // 2),
-            int(x_var[i] + point_width // 2 + width_pad),
-            int(y_var[i] + point_height // 2 + height_pad)
-        )
-        canvas.paste(point_img, bounding_box)
-
-    if fig_size:
-        canvas.thumbnail(fig_size, pil_image.BICUBIC)
-
-    return plots.pillow_to_matplotlib(canvas, **kwargs)
+    return images_to_scatter(images, x_var, y_var, threshold=threshold,
+                             alpha=alpha, **kwargs)
