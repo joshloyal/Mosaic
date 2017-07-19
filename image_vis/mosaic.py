@@ -55,7 +55,13 @@ def images_to_mosaic(images):
         lower = upper + image_height
         bounding_box = (left, upper, right, lower)
 
-        mosaic_image.paste(image, bounding_box)
+        try:
+            mosaic_image.paste(image, bounding_box)
+        except ValueError:
+            raise ValueError(
+                'Not all images have the same width and height. '
+                'You can force even sizes by setting the `target_size`'
+                'argument to the desired dimensions.')
 
     return mosaic_image
 
@@ -64,7 +70,7 @@ def mosaic_plot(data,
                 image_col=None,
                 image_dir='',
                 sort_by=None,
-                target_size=None,
+                target_size=(40, 40),
                 fig_size=None,
                 n_samples=None,
                 random_state=123,
