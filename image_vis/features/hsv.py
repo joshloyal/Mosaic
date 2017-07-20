@@ -99,8 +99,7 @@ def extract_hsv_stats(image_list, mode='mean', background=None, n_jobs=1):
         A list of PIL.Images.
     mode : str {'mean', 'median'} (default='mean')
         The statistic to extract for each channel.
-    background : array-like of shape [3,] or str {'white', 'black']
-                 (default=None)
+    background : array-like of shape [3,] or str {'white', 'black'], optional
         The background color value for each hsv channel.
         These values will be masked out in the calculation.
         If None, then all values are included in the statistics
