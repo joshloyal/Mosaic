@@ -73,7 +73,7 @@ def scatter_plot(x, y,
                  image_dir='',
                  image_col=None,
                  n_samples=None,
-                 target_size=(20, 20),
+                 image_size=(20, 20),
                  hue=None,
                  threshold=None,
                  alpha=0.9,
@@ -103,7 +103,7 @@ def scatter_plot(x, y,
         If not None, then randomly downsample the dataset
         to `n_sample` images.
 
-    target_size : int
+    image_size : int
         The size of each image in the scatter plot.
 
     threshold : float (default=None)
@@ -145,7 +145,7 @@ def scatter_plot(x, y,
         data[image_col],
         image_dir=image_dir,
         as_image=False,
-        target_size=target_size,
+        image_size=image_size,
         n_jobs=n_jobs)
 
     # TODO (seaborn is only required for a color palette. Remove this)

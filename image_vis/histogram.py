@@ -20,7 +20,7 @@ def image_histogram(x, y,
                     image_col=None,
                     image_dir='',
                     n_samples=None,
-                    target_size=(20, 20),
+                    image_size=(20, 20),
                     random_state=123,
                     n_jobs=1,
                     **kwargs):
@@ -78,7 +78,7 @@ def image_histogram(x, y,
         images = image_io.load_images(
             data[image_col],
             image_dir=image_dir,
-            target_size=target_size,
+            image_size=image_size,
             as_image=True,
             n_jobs=n_jobs)
         hsv = features.extract_hsv_stats(images, n_jobs=n_jobs)
@@ -87,14 +87,14 @@ def image_histogram(x, y,
     data['x_bin'] = pd.cut(data[x], n_bins, labels=False)
     bin_max = data.groupby('x_bin').size().max()
 
-    px_w = target_size[0] * n_bins
-    px_h = target_size[1] * bin_max
+    px_w = image_size[0] * n_bins
+    px_h = image_size[1] * bin_max
 
     #background_color = (50, 50, 50)
     background_color = (255, 255, 255)
     canvas = pil_image.new('RGB', (px_w, px_h), background_color)
 
-    thumbnail_px = target_size
+    thumbnail_px = image_size
     bins = list(set(list(data.x_bin)))
 
     for item in bins:
@@ -107,15 +107,15 @@ def image_histogram(x, y,
         tmp.reset_index(drop=True, inplace=True)
 
         y_coord = px_h
-        x_coord = target_size[0] * item
+        x_coord = image_size[0] * item
 
         for i in range(len(tmp.index)):
             thumbnail = image_io.load_image(
                 tmp[image_col].iloc[i],
                 image_dir,
-                target_size=target_size,
+                image_size=image_size,
                 as_image=True)
             canvas.paste(thumbnail, (x_coord, y_coord))
-            y_coord -= target_size[1]
+            y_coord -= image_size[1]
 
     return plots.pillow_to_matplotlib(canvas, **kwargs)

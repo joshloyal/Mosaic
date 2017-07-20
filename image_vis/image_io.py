@@ -99,7 +99,7 @@ def sample_images(images, n_samples, seed=123):
     return random_state.choice(images, size=n_samples, replace=False)
 
 
-def to_pillow_image(img_array, target_size=None):
+def to_pillow_image(img_array, image_size=None):
     """Convert an image represented as a numpy array back into a
     Pillow Image object."""
     #if np.issubdtype(img_array.dtype, np.float):
@@ -110,14 +110,14 @@ def to_pillow_image(img_array, target_size=None):
     #                     'Cannot convert to a pillow image.')
     img_array = skimage.img_as_ubyte(img_array)
     img = pil_image.fromarray(img_array)
-    if target_size:
-        img = img.resize((target_size[1], target_size[0]), pil_image.LANCZOS)
+    if image_size:
+        img = img.resize((image_size[1], image_size[0]), pil_image.LANCZOS)
     return img
 
 
 def load_image(image_file,
                image_dir='',
-               target_size=None,
+               image_size=None,
                as_image=False,
                dtype=np.uint8):
     """Loads an image from a file on disk.
@@ -131,7 +131,7 @@ def load_image(image_file,
     image_dir : str (default='')
         The directory where the image resides on disk. This string will
         be appended to the beginning of `image_file`.
-    target_size : tuple (default=None)
+    image_size : tuple (default=None)
         The target size in pixels. This is a 2-tuple (width, height).
         If None then no resizing is performed.
     as_image : bool (default=False)
@@ -143,8 +143,8 @@ def load_image(image_file,
     image_loc = image_path(image_file, image_dir=image_dir)
     img = pil_image.open(image_loc).convert('RGB')
 
-    if target_size:
-        img = img.resize((target_size[1], target_size[0]), pil_image.LANCZOS)
+    if image_size:
+        img = img.resize((image_size[1], image_size[0]), pil_image.LANCZOS)
 
     if as_image:
         return img
@@ -155,7 +155,7 @@ def load_image(image_file,
 def load_images(image_files,
                 image_dir='',
                 n_samples=None,
-                target_size=None,
+                image_size=None,
                 as_image=False,
                 random_state=123,
                 n_jobs=1,
@@ -173,7 +173,7 @@ def load_images(image_files,
         be appended to the beginning of `image_file`.
     n_samples : int
         Number of samples to take.
-    target_size : tuple (default=None)
+    image_size : tuple (default=None)
         The target size in pixels. This is a 2-tuple (width, height).
         If None then no resizing is performed.
     as_image : bool (default=False)
@@ -195,7 +195,7 @@ def load_images(image_files,
     images = Parallel(n_jobs=n_jobs)(
                 delayed(load_image)(img,
                                     image_dir=image_dir,
-                                    target_size=target_size,
+                                    image_size=image_size,
                                     as_image=as_image,
                                     dtype=dtype)
                 for img in image_files)
@@ -208,7 +208,7 @@ def load_images(image_files,
 
 def load_from_directory(image_directory,
                         n_samples=None,
-                        target_size=None,
+                        image_size=None,
                         as_image=False,
                         random_state=123,
                         n_jobs=1,
@@ -223,7 +223,7 @@ def load_from_directory(image_directory,
         The absolute path where images are located on disk.
     n_samples : int
         Number of samples to take.
-    target_size : tuple (default=None)
+    image_size : tuple (default=None)
         The target size in pixels. This is a 2-tuple (width, height).
         If None then no resizing is performed.
     as_image : bool (default=False)
@@ -242,7 +242,7 @@ def load_from_directory(image_directory,
         [image_glob(image_directory, ext) for ext in image_extensions]))
     return load_images(image_files,
                        n_samples=n_samples,
-                       target_size=target_size,
+                       image_size=image_size,
                        as_image=as_image,
                        random_state=random_state,
                        n_jobs=n_jobs,

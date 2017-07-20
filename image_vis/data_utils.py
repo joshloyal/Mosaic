@@ -73,10 +73,10 @@ def get_images(data, images,
     """
     if isinstance(images, np.ndarray):
         if as_image:
-            return [image_io.to_pillow_image(img, target_size=target_size) for
+            return [image_io.to_pillow_image(img, image_size=image_size) for
                     img in images]
-        elif target_size:
-            return [scipy.misc.imresize(img, target_size, interp='lanczos') for
+        elif image_size:
+            return [scipy.misc.imresize(img, image_size, interp='lanczos') for
                     img in images]
 
     if not image_dir:
@@ -89,7 +89,7 @@ def get_images(data, images,
         data[images],
         image_dir=image_dir,
         as_image=as_image,
-        target_size=target_size,
+        image_size=image_size,
         n_jobs=n_jobs)
 
     return images
