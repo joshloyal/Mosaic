@@ -34,7 +34,7 @@ def images_to_grid(images, x_var, y_var, **kwargs):
 
     Returns
     -------
-    A properly shpaed NxWx3 PIL Image.
+    A properly shaped width x height x 3 PIL Image.
     """
     # scale the variables between 0-1 (subtract off min?)
     features.minmax_scale(x_var)
