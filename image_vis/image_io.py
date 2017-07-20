@@ -258,20 +258,28 @@ def directory_to_dataframe(image_dir='',
     The pandas.DataFrame has a single column `image_path`, which contains
     the paths to the various images. The paths are relative to the given
     `image_dir`. For example, a directory of the form
-        - image_dir
-            |-- image1.jpg
-            |-- image2.jpg
+
+    image_dir
+        |-- image1.jpg
+        |-- image2.jpg
+
     would result in the following  single column dataframe:
-        pandas.DataFrame({'image_path': ['image1.jpg', 'image2.jpg']}).
+
+    pandas.DataFrame({image_path: [image1.jpg, image2.jpg]}).
 
     Parameters
     ----------
     image_dir : str
         The directory to search of images and place their paths
         in a dataframe.
+
     features : list or None
         A list of features to include in the dataframe. The default (None)
         includes no additional features.
+
+    n_jobs : int
+        The number of parallel jobs used to load the
+        images from disk.
 
     Returns
     -------

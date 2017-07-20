@@ -8,8 +8,9 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from matplotlib import pyplot as plt
 import seaborn as sns
 
-from image_vis import features
+from image_vis import data_utils
 from image_vis import contexts
+from image_vis import features
 from image_vis import image_io
 from image_vis import plots
 
@@ -17,7 +18,7 @@ from image_vis import plots
 __all__ = ['scatter_plot']
 
 
-def images_to_scatter(images, x_var, y_var, threshold=None, alpha=0.9,
+def images_to_scatter(images, x, y, threshold=None, alpha=0.9,
                       **kwargs):
     """Creates a scatter plot.
 
@@ -26,10 +27,10 @@ def images_to_scatter(images, x_var, y_var, threshold=None, alpha=0.9,
     images : np.array of shape [n_samples, n_width, n_height, n_channels]
         A 4D array holding the images to plot.
 
-    x_var : np.array of shape [n_samples,]
+    x : np.array of shape [n_samples,]
         The variable to plot on the x-axis
 
-    y_var : np.array of shape [n_samples,]
+    y : np.array of shape [n_samples,]
         The variable to plot on the y-axis
 
     threshold : float
@@ -42,12 +43,13 @@ def images_to_scatter(images, x_var, y_var, threshold=None, alpha=0.9,
 
     Returns
     -------
-    ...
+    ax : matplotlib Axes
+        Returns the Axes object with the plot for further tweaking.
     """
     # scale the variables between 0-1
-    features.minmax_scale(x_var)
-    features.minmax_scale(y_var)
-    xy = np.c_[x_var, y_var]
+    features.minmax_scale(x)
+    features.minmax_scale(y)
+    xy = np.c_[x, y]
 
     fig, ax = plt.subplots(**kwargs)
 
@@ -69,51 +71,50 @@ def images_to_scatter(images, x_var, y_var, threshold=None, alpha=0.9,
 
 
 def scatter_plot(x, y,
-                 data,
-                 image_dir='',
-                 image_col=None,
-                 n_samples=None,
-                 image_size=(20, 20),
+                 images=None,
+                 data=None,
                  hue=None,
+                 image_dir='',
+                 image_size=(20, 20),
                  threshold=None,
                  alpha=0.9,
-                 random_state=123,
                  n_jobs=1,
                  **kwargs):
     """Create an image scatter plot based on columns `x` vs. `y`.
 
     Parameters
     ----------
-    x : str
-        Name of the column to use for the x-axis.
+    x, y : str or array-like
+        Data or names of variables in `data`. These variables are
+        used for the x and y axes respectively.
 
-    y : str
-        Name of the column to use for the y-axis
+    images : str or array-like, optional
+        Image arrays or names of the column pointing to the
+        image paths within `data`.
 
-    data : pandas.DataFrame
-        The dataframe where both columns are present.
+    data : pandas.DataFrame, optional
+        Tidy ("long-form") dataframe where each column is a variable
+        and each row is an observation. If `images` is a variable name,
+        then it should be contained in `data`.
 
-    image_dir : str
-        Path to the directory holding the images.
+    image_dir : str, optional
+        The location of the image files on disk. Images will
+        be loaded from files matching the pattern
+        'image_dir + os.path.sep + image_path'.
 
-    image_col : str
-        Name of the column containing the image files.
+    image_size : int, optional
+        The size of each image displayed in the scatter plot. Images
+        will be sampled to `image_size` if the size of the images
+        do not match `image_size`.
 
-    n_samples : int (default=None)
-        If not None, then randomly downsample the dataset
-        to `n_sample` images.
-
-    image_size : int
-        The size of each image in the scatter plot.
-
-    threshold : float (default=None)
+    threshold : float, optional
         In order to avoid clutter only one point in a ball of
         radius `threshold` is displayed. Note that features
         are re-scaled to lie on the unit square [0, 1] x [0, 1].
         The default of None means all points are displayed.
 
-    random_state : int
-        The seed to use for the random number generator.
+    alpha : float, optional
+        Alpha level used when displaying images.
 
     n_jobs : int
         The number of parallel jobs used to load the
@@ -126,23 +127,13 @@ def scatter_plot(x, y,
 
     .. plot:: ../examples/scatter_plot.py
     """
-    data = data.copy()
-    if n_samples is not None and n_samples < len(data):
-        data = data.sample(n_samples, replace=True, random_state=random_state)
-
-    if not image_dir:
-        image_dir = contexts.get_image_dir()
-
-    if not image_col:
-        image_col = contexts.get_image_col()
-
     # get co-variates
-    x_var = data[x].values
-    y_var = data[y].values
+    x = data_utils.get_variable(data, x)
+    y = data_utils.get_variable(data, y)
 
     # load images
-    images = image_io.load_images(
-        data[image_col],
+    images = data_utils.get_images(
+        data, images,
         image_dir=image_dir,
         as_image=False,
         image_size=image_size,
@@ -150,10 +141,11 @@ def scatter_plot(x, y,
 
     # TODO (seaborn is only required for a color palette. Remove this)
     if hue is not None:
-        values, value_map = np.unique(data[hue], return_inverse=True)
+        hue = data_utils.get_variable(data, hue)
+        values, value_map = np.unique(hue, return_inverse=True)
         palette = sns.husl_palette(len(values))
         images = [features.color_image(img, hue=palette[val]) for
                   img, val in zip(images, value_map)]
 
-    return images_to_scatter(images, x_var, y_var, threshold=threshold,
+    return images_to_scatter(images, x, y, threshold=threshold,
                              alpha=alpha, **kwargs)

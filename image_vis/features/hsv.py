@@ -53,8 +53,8 @@ def hsv_features_single(image, agg_func=np.mean, background=None):
 
     Returns
     -------
-    tuple (h_mean, s_mean, v_mean):
-        The statitics for each channel.
+    statistics : tuple
+        The statistics for each channel (h_mean, s_mean, v_mean).
     """
     image = np.asarray(image, dtype=np.uint8)
     hsv_image = color.rgb2hsv(image)
