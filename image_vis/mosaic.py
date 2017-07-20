@@ -132,7 +132,7 @@ def mosaic_plot(images=None,
     """
     images = data_utils.get_images(data, images,
                                    as_image=True,
-                                   target_size=image_size,
+                                   image_size=image_size,
                                    n_jobs=n_jobs)
 
     if sort_by is not None:

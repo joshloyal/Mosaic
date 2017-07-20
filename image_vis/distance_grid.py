@@ -67,7 +67,7 @@ def distance_grid(x, y,
                   data=None,
                   hue=None,
                   image_dir='',
-                  target_size=(20, 20),
+                  image_size=(20, 20),
                   n_jobs=1,
                   **kwargs):
     """Draw a plot ordering images in a regularly spaced 2-d grid
@@ -95,7 +95,7 @@ def distance_grid(x, y,
     image_dir : str (default='')
         The location of the image files on disk.
 
-    target_size : int
+    image_size : int
         The size of each image in the scatter plot.
 
     n_jobs : int (default=1)
@@ -122,7 +122,7 @@ def distance_grid(x, y,
             data, images,
             image_dir=image_dir,
             as_image=False,
-            target_size=target_size,
+            image_size=image_size,
             n_jobs=n_jobs)
 
         hue = data_utils.get_variable(data, hue)
@@ -137,7 +137,7 @@ def distance_grid(x, y,
             data, images,
             image_dir=image_dir,
             as_image=True,
-            target_size=target_size,
+            image_size=image_size,
             n_jobs=n_jobs)
 
     return images_to_grid(images, x_var, y_var, **kwargs)
