@@ -11,6 +11,7 @@ Plots
    mosaic_plot
    image_histogram
    scatter_plot
+   grid_plot
 
 I/O
 ---

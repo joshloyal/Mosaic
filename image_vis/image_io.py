@@ -8,6 +8,8 @@ import itertools
 
 import pandas as pd
 import numpy as np
+import skimage
+
 from joblib import Parallel, delayed
 from PIL import Image as pil_image
 
@@ -95,6 +97,22 @@ def sample_images(images, n_samples, seed=123):
     """
     random_state = np.random.RandomState(seed)
     return random_state.choice(images, size=n_samples, replace=False)
+
+
+def to_pillow_image(img_array, target_size=None):
+    """Convert an image represented as a numpy array back into a
+    Pillow Image object."""
+    #if np.issubdtype(img_array.dtype, np.float):
+    #    img_array = (255. * img_array / np.max(img_array)).astype(np.uint8)
+
+    #if not np.issubdtype(img_array.dtype, np.unsignedinteger):
+    #    raise ValueError('Array is not an unsigned int. '
+    #                     'Cannot convert to a pillow image.')
+    img_array = skimage.img_as_ubyte(img_array)
+    img = pil_image.fromarray(img_array)
+    if target_size:
+        img = img.resize((target_size[1], target_size[0]), pil_image.LANCZOS)
+    return img
 
 
 def load_image(image_file,

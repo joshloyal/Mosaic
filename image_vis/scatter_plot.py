@@ -17,20 +17,6 @@ from image_vis import plots
 __all__ = ['scatter_plot']
 
 
-def minmax_scale(x):
-    """Scale data so it is in the range (0, 1)"""
-    data_min = np.min(x)
-    data_max = np.max(x)
-    data_range = data_max - data_min
-
-    # don't divide by zero
-    if data_range == 0.:
-        data_range = 1.
-
-    x -= data_min
-    x /= data_range
-
-
 def images_to_scatter(images, x_var, y_var, threshold=None, alpha=0.9,
                       **kwargs):
     """Creates a scatter plot.
@@ -59,8 +45,8 @@ def images_to_scatter(images, x_var, y_var, threshold=None, alpha=0.9,
     ...
     """
     # scale the variables between 0-1
-    minmax_scale(x_var)
-    minmax_scale(y_var)
+    features.minmax_scale(x_var)
+    features.minmax_scale(y_var)
     xy = np.c_[x_var, y_var]
 
     fig, ax = plt.subplots(**kwargs)
