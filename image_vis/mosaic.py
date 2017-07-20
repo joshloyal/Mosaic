@@ -6,6 +6,7 @@ import numpy as np
 from PIL import Image as pil_image
 
 from image_vis import contexts
+from image_vis import data_utils
 from image_vis import image_io
 from image_vis import features
 from image_vis import plots
@@ -15,17 +16,18 @@ __all__ = ['mosaic_plot']
 
 
 def images_to_mosaic(images):
-    """Creates a mosaic plot along with any necessary padding.
+    """Create a mosaic plot of images.
 
     Parameters
     ----------
-    images : list
-        A List of PIL Image objects. All images must be
-        the same shape NxWx3.
+    images : listof PIL Images.
+        Images to display in the mosaic plot. All images must be
+        the same shape.
 
     Returns
     -------
-    A properly shaped NxWx3 PIL Image with any necessary padding.
+    ax : matplotlib Axes
+        Returns the Axes object with the plot for further tweaking.
     """
     n_samples = len(images)
 
@@ -60,55 +62,62 @@ def images_to_mosaic(images):
         except ValueError:
             raise ValueError(
                 'Not all images have the same width and height. '
-                'You can force even sizes by setting the `target_size`'
+                'You can force even sizes by setting the `image_size`'
                 'argument to the desired dimensions.')
 
     return mosaic_image
 
 
-def mosaic_plot(data,
-                image_col=None,
-                image_dir='',
+def mosaic_plot(images=None,
+                data=None,
                 sort_by=None,
-                target_size=(40, 40),
-                fig_size=None,
-                n_samples=None,
-                random_state=123,
+                image_dir='',
+                image_size=(40, 40),
                 n_jobs=1,
                 **kwargs):
-    """Creates a mosaic plot along with any necessary padding.
+    """Create a mosaic plot of images.
 
     Parameters
     ----------
-    image_col : str or None
-        Column name corresponding to the images.
+    images : str or array-like of shape [n_samples, width, height, channels], optional
+        Image array or name of the variable containing the image file
+        paths within `data`.
 
-    data : pd.DataFrame
-        Pandas dataframe holding the dataset.
+    data : pandas.DataFrame, optional
+        Tidy ("long-form") dataframe where each column is a variable
+        and each row is an observation. If `images` is a variable name,
+        then it should be contained in `data`.
 
-    sort_by : str
-        Column to sort by.
+    sort_by : str or array-like of shape [n_samples,], optional
+        Data or name of the variable to sort images by.
 
-    image_dir : str (default='')
-        The location of the image files on disk.
+    image_dir : str, optional
+        The location of the image files on disk. Images will
+        be loaded from files matching the pattern
+        'image_dir + os.path.sep + image_path'.
 
-    n_samples : int (default=None)
-        The number of random sample images to use. If None, then
-        all images are loaded. This can be memory expensive.
+    image_size : int, optional
+        The size of each image displayed in the scatter plot. Images
+        will be sampled to `image_size` if the size of the images
+        do not match `image_size`.
 
-    as_image : bool (default=False)
-        Whether to return a PIL image otherwise return a numpy array.
-
-    random_state : int (default=123)
-        The seed to use for the random sampling.
-
-    n_jobs : int (default=1)
+    n_jobs : int, optional
         The number of parallel workers to use for loading
-        the image files.
+        the image files when reading from disk. The default
+        uses a single core.
+
+    kwargs : key, value pairings
+        Additional keyword arguments are passed to the function used to draw
+        the plot on the Axes.
 
     Returns
     -------
-    A properly shaped NxWx3 image with any necessary padding.
+    ax : matplotlib Axes
+        Returns the Axes object with the plot for further tweaking.
+
+    See Also
+    --------
+    distance_grid : Combines a mosaic plot with a :func:`scatter_plot`.
 
     Examples
     --------
@@ -121,37 +130,25 @@ def mosaic_plot(data,
 
     .. plot:: ../examples/mosaic_plot_mnist.py
     """
-    if n_samples is not None and n_samples < len(data):
-        data = data.sample(n=n_samples,
-                           replace=False,
-                           random_state=random_state)
+    images = data_utils.get_images(data, images,
+                                   as_image=True,
+                                   target_size=image_size,
+                                   n_jobs=n_jobs)
 
-    if (sort_by is not None and
-            sort_by not in features.HSVFeatures.all_features()):
-        data = data.sort_values(by=sort_by, ascending=True)
-
-    if not image_dir:
-        image_dir = contexts.get_image_dir()
-
-    if not image_col:
-        image_col = contexts.get_image_col()
-
-    images = image_io.load_images(
-        data[image_col],
-        image_dir=image_dir,
-        as_image=True,
-        target_size=target_size,
-        n_jobs=n_jobs)
-
-    if sort_by in features.HSVFeatures.all_features():
-        hsv = features.extract_hsv_stats(images, n_jobs=n_jobs)
-        sort_by_values = hsv[:, features.HSVFeatures.feature_index(sort_by)]
-        sorted_indices = np.argsort(sort_by_values)
-        images = [images[i] for i in sorted_indices]
+    if sort_by is not None:
+        if sort_by in features.HSVFeatures.all_features():
+            hsv = features.extract_hsv_stats(images, n_jobs=n_jobs)
+            sort_by_values = hsv[:, features.HSVFeatures.feature_index(sort_by)]
+            sorted_indices = np.argsort(sort_by_values)
+            images = [images[i] for i in sorted_indices]
+        else:
+            sort_by = data_utils.get_variable(data, sort_by)
+            images = [images[i] for i in np.argsort(sort_by)]
 
     mosaic = images_to_mosaic(images)
 
-    if fig_size:
+    if 'figsize' in kwargs:
+        fig_size = kwargs.pop('figsize')
         mosaic.thumbnail(fig_size, pil_image.BICUBIC)
 
     return plots.pillow_to_matplotlib(mosaic, **kwargs)

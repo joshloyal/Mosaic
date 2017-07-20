@@ -22,4 +22,4 @@ def pillow_to_matplotlib(image, **kwargs):
     f, ax = plt.subplots(**kwargs)
     fig = plt.imshow(image)
     remove_axis(fig, ax)
-    return fig
+    return ax
