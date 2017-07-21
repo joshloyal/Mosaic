@@ -5,5 +5,5 @@ from image_vis.distance_grid import *
 from image_vis.features import *
 from image_vis import image_io
 from image_vis import data_utils
-from image_vis.contexts import plotting_context
+from image_vis.contexts import data_context
 from image_vis.datasets import load_dataset

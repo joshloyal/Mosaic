@@ -36,4 +36,4 @@ Contexts
 .. autosummary::
    :toctree: generated/
 
-   plotting_context
+   data_context
