@@ -5,9 +5,7 @@ from __future__ import unicode_literals
 import numpy as np
 from PIL import Image as pil_image
 
-from image_vis import contexts
 from image_vis import data_utils
-from image_vis import image_io
 from image_vis import features
 from image_vis import plots
 

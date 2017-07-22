@@ -3,15 +3,28 @@
 API Reference
 =============
 
-Plots
------
+Mosaic Plots
+------------
 .. autosummary::
    :toctree: generated/
 
    mosaic_plot
+   distance_grid
+
+Continous Plots
+---------------
+.. autosummary::
+   :toctree: generated/
+
    image_histogram
    scatter_plot
-   distance_grid
+
+Categorical Plots
+-----------------
+.. autosummary::
+   :toctree: generated/
+
+   image_barplot
 
 I/O
 ---
