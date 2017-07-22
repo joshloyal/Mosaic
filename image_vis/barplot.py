@@ -16,6 +16,7 @@ __all__ = ['image_barplot']
 
 
 def gen_splits(array, n_elements):
+    """Split the horizontal bars with n_elements equally."""
     current_index = 0
     next_index = min(n_elements, len(array))
     while True:
@@ -25,38 +26,60 @@ def gen_splits(array, n_elements):
         current_index = next_index
         next_index = min(current_index + n_elements, len(array))
 
-def images_to_barplot(images, y, bar_height=30, padding=None, **kwargs):
+
+def images_to_barplot(images, y, bar_height=30, **kwargs):
+    """Create a image bar plot.
+
+    Parameters
+    ----------
+    images : np.array of shape [n_samples, n_width, n_height, n_channels]
+        A 4D array holding the images to plot.
+
+    y : np.array of shape [n_samples,]
+        The categorical variable to plot on the y-axis
+
+    bar_height : int
+        The number of images placed in a single horizontal bar before
+        creating a new bar.
+
+    Returns
+    -------
+    ax : matplotlib Axes
+        Returns the Axes object with the plot for further tweaking.
+    """
     fig, ax = plt.subplots(**kwargs)
 
     img_width, img_height = images.shape[1], images.shape[2]
-
-    if padding is None:
-        padding = img_width
+    vertical_padding = img_width
+    horizontal_padding = 1  # this padding is in terms of # of images
 
     total_n_splits = 0
     max_width = 0
-    labels = np.unique(y)
     ticks = []
+    labels = np.unique(y)
     for label_idx, label in enumerate(labels):
-        g_images = images[y == label]
-        n_splits = np.floor(len(g_images) / bar_height)
-        bottom = img_height * total_n_splits + padding * label_idx
+        image_group = images[y == label]
+        bottom = img_height * total_n_splits + vertical_padding * label_idx
         bottom_start = bottom
-        for image_split in gen_splits(g_images, bar_height):
+        for image_split in gen_splits(image_group, bar_height):
             total_n_splits += 1
             bottom += img_height
             top = bottom + img_height
             for img_idx in range(len(image_split)):
-                img = image_split[img_idx, ...]
-                left = img_width * (img_idx + 1) # have one image horizontal padding
-                right = img_width * (img_idx + 2)
+                img = image_split[img_idx]
+
+
+                left = img_width * (img_idx + horizontal_padding)
+                right = img_width * (img_idx + horizontal_padding + 1)
                 plt.imshow(img, extent=[left, right, bottom, top])
 
                 if right > max_width:
                     max_width = right
 
+        # the ticks should be in the center of the bar
         ticks.append((top + img_height + bottom_start) / 2.)
 
+    # limits with some wiggle room
     plt.xlim(0, max_width * 1.1)
     plt.ylim(0, top)
 
