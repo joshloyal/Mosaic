@@ -76,8 +76,8 @@ def get_images(data, images,
             return [image_io.to_pillow_image(img, image_size=image_size) for
                     img in images]
         elif image_size:
-            return [scipy.misc.imresize(img, image_size, interp='lanczos') for
-                    img in images]
+            return np.asarray([scipy.misc.imresize(img, image_size, interp='lanczos') for
+                    img in images])
 
     if not image_dir:
         image_dir = contexts.get_image_dir()
