@@ -8,14 +8,17 @@ class DataContext(object):
     def __init__(self):
         self._image_col = None
         self._image_dir = ''
+        self._image_data = None
 
-    def set_context(self, image_col=None, image_dir=''):
+    def set_context(self, image_col=None, image_dir='', image_data=None):
         self._image_col = image_col
         self._image_dir = image_dir
+        self._image_data = image_data
 
     def unset_context(self):
         self._image_col = None
         self._image_dir = ''
+        self._image_data = None
 
     @property
     def image_dir(self):
@@ -25,12 +28,16 @@ class DataContext(object):
     def image_col(self):
         return self._image_col
 
+    @property
+    def image_data(self):
+        return self._image_data
+
 
 _DATA_CONTEXT = DataContext()
 
 
 @contextlib.contextmanager
-def data_context(image_col, image_dir=''):
+def data_context(image_col='', image_data=None, image_dir=''):
     """Set the data context parameters.
 
     This affects the loading of image data when constructing plots.
@@ -57,7 +64,8 @@ def data_context(image_col, image_dir=''):
 
     """
     global _DATA_CONTEXT
-    _DATA_CONTEXT.set_context(image_col=image_col, image_dir=image_dir)
+    _DATA_CONTEXT.set_context(
+        image_col=image_col, image_dir=image_dir, image_data=image_data)
     yield _DATA_CONTEXT
     _DATA_CONTEXT.unset_context()
 
@@ -76,3 +84,8 @@ def get_image_dir():
 def get_image_col():
     """Return the `image_col` set in the current context."""
     return get_data_context().image_col
+
+
+def get_image_data():
+    """Return the `image_data` set in the current context."""
+    return get_data_context().image_data

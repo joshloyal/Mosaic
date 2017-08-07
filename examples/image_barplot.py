@@ -9,6 +9,4 @@ images, labels = ivs.load_dataset('cifar10')
 
 images = images[:1000]
 labels = labels[:1000]
-ivs.image_barplot(y=labels, images=images,
-                  bar_height=50, image_size=(50, 50),
-                  figsize=(15, 5))
+ivs.image_barplot(y=labels, images=images, bar_height=50)

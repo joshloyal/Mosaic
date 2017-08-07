@@ -47,14 +47,15 @@ def images_to_scatter(images, x, y, threshold=None, alpha=0.9,
         Returns the Axes object with the plot for further tweaking.
     """
     # scale the variables between 0-1
-    features.minmax_scale(x)
-    features.minmax_scale(y)
+    #features.minmax_scale(x)
+    #features.minmax_scale(y)
     xy = np.c_[x, y]
 
     fig, ax = plt.subplots(**kwargs)
+    #ax = plt.gca()
 
     # something big. points lie in [0, 1] x [0, 1].
-    shown_points = np.array([[1., 1.]])
+    shown_points = np.array([[np.inf, np.inf]])
 
     for i in range(len(images)):
         dist = np.sum((xy[i] - shown_points) ** 2, axis=1)
@@ -67,6 +68,8 @@ def images_to_scatter(images, x, y, threshold=None, alpha=0.9,
                             frameon=False, xycoords='data')
         ax.add_artist(ab)
 
+    plt.xlim(x.min(), x.max())
+    plt.ylim(y.min(), y.max())
     return plots.remove_axis(ax=ax)
 
 
@@ -75,9 +78,10 @@ def scatter_plot(x, y,
                  data=None,
                  hue=None,
                  image_dir='',
-                 image_size=(20, 20),
+                 image_size=20,
                  threshold=None,
                  alpha=0.9,
+                 color=None,
                  n_jobs=1,
                  **kwargs):
     """Create an image scatter plot based on columns `x` vs. `y`.
@@ -146,6 +150,9 @@ def scatter_plot(x, y,
         palette = sns.husl_palette(len(values))
         images = [features.color_image(img, hue=palette[val]) for
                   img, val in zip(images, value_map)]
+    elif color is not None:
+        images = [features.color_image(img, hue=color) for
+                  img in images]
 
     return images_to_scatter(images, x, y, threshold=threshold,
                              alpha=alpha, **kwargs)

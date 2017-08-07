@@ -58,7 +58,7 @@ def images_to_barplot(images, y, bar_height=30, **kwargs):
     ticks = []
     labels = np.unique(y)
     for label_idx, label in enumerate(labels):
-        image_group = images[y == label]
+        image_group = np.squeeze(images[y == label])
         bottom = img_height * total_n_splits + vertical_padding * label_idx
         bottom_start = bottom
         for image_split in gen_splits(image_group, bar_height):
@@ -67,7 +67,6 @@ def images_to_barplot(images, y, bar_height=30, **kwargs):
             top = bottom + img_height
             for img_idx in range(len(image_split)):
                 img = image_split[img_idx]
-
 
                 left = img_width * (img_idx + horizontal_padding)
                 right = img_width * (img_idx + horizontal_padding + 1)

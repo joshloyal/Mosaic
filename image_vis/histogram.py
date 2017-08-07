@@ -2,9 +2,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import unicode_literals
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from PIL import Image as pil_image
 
 from image_vis import data_utils
@@ -74,6 +77,40 @@ def images_to_histogram(images, x, n_bins=None, sort_by=None):
     return canvas
 
 
+def histogram_matplotlib(images, x, n_bins=None, sort_by=None, **kwargs):
+    fig, ax = plt.subplots(**kwargs)
+
+    n_bins = n_bins if n_bins is not None else 'fd'
+    hist, bin_edges = np.histogram(x, bins=n_bins)
+    n_bins = hist.shape[0]
+    bin_max = hist.max()
+
+    y_max = 0
+    for bin_idx, edge in enumerate(zip(bin_edges, bin_edges[1:])):
+        img_height = abs(edge[1] - edge[0])
+        edge_mask = (x >= edge[0]) & (x < edge[1])
+        bin_images = images[edge_mask]
+
+        # sort y values if present
+        if sort_by is not None:
+            bin_sort = sort_by[edge_mask]
+            bin_images = bin_images[np.argsort(bin_sort)]
+
+        left, right = edge
+        for i, img in enumerate(bin_images):
+            bottom = img_height * i
+            top = bottom + img_height
+            ax.imshow(img, extent=[left, right, bottom, top], interpolation='lanczos')
+            if top > y_max:
+                y_max = top
+
+    ax.set_xlim(bin_edges[0], bin_edges[-1])
+    ax.set_ylim(0, y_max)
+    ax.yaxis.set_visible(False)
+
+    return sns.despine(ax=ax, left=True)
+
+
 def image_histogram(x,
                     images=None,
                     data=None,
@@ -134,7 +171,8 @@ def image_histogram(x,
         data, images,
         image_dir=image_dir,
         image_size=image_size,
-        as_image=True,
+        index=None,#x.index,
+        as_image=False,
         n_jobs=n_jobs)
 
     x = data_utils.get_variable(data, x)
@@ -146,6 +184,7 @@ def image_histogram(x,
         else:
             sort_by = data_utils.get_variable(data, sort_by)
 
-    histo = images_to_histogram(images, x, n_bins=n_bins, sort_by=sort_by)
+    #histo = images_to_histogram(images, x, n_bins=n_bins, sort_by=sort_by)
+    #return plots.pillow_to_matplotlib(histo, **kwargs)
 
-    return plots.pillow_to_matplotlib(histo, **kwargs)
+    return histogram_matplotlib(images, x, n_bins=n_bins, sort_by=sort_by, **kwargs)

@@ -24,11 +24,13 @@ def get_variable(data, var):
     array : np.array
         A numpy array holding the values of `var`.
     """
-    if data is not None:
-        var = data.get(var, var)
-
     if isinstance(var, pd.Series):
         var = var.values
+
+    if data is not None and var in data:
+        var = data[var]
+    else:
+        raise ValueError('Could not find {}.'.format(var))
 
     return var
 
@@ -37,6 +39,7 @@ def get_images(data, images,
                image_dir='',
                image_size=None,
                as_image=False,
+               index=None,
                n_jobs=1):
     """Helper function to load images from disk or properly format
     an already existing image array.
@@ -83,10 +86,15 @@ def get_images(data, images,
         image_dir = contexts.get_image_dir()
 
     if not images:
-        images = contexts.get_image_col()
+        images = contexts.get_image_data()
+        if images is None:
+            images = data[contexts.get_image_col()]
+
+    if index is not None:
+        images = images.iloc[index]
 
     images = image_io.load_images(
-        data[images],
+        images,
         image_dir=image_dir,
         as_image=as_image,
         image_size=image_size,

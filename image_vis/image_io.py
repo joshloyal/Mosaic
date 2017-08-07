@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import glob
 import os
 import itertools
+import numbers
 
 import pandas as pd
 import numpy as np
@@ -142,6 +143,9 @@ def load_image(image_file,
     """
     image_loc = image_path(image_file, image_dir=image_dir)
     img = pil_image.open(image_loc).convert('RGB')
+
+    if isinstance(image_size, (numbers.Integral, np.integer)):
+        image_size = (image_size, image_size)
 
     if image_size:
         img = img.resize((image_size[1], image_size[0]), pil_image.LANCZOS)
