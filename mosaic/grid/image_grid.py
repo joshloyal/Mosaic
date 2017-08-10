@@ -145,8 +145,4 @@ def image_grid(images=None,
 
     grid = images_to_grid(images)
 
-    if 'figsize' in kwargs:
-        fig_size = kwargs.pop('figsize')
-        grid.thumbnail(fig_size, pil_image.BICUBIC)
-
     return plots.pillow_to_matplotlib(grid, **kwargs)

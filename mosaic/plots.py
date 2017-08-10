@@ -19,7 +19,7 @@ def remove_axis(fig=None, ax=None):
 
 
 def pillow_to_matplotlib(image, **kwargs):
-    #f, ax = plt.subplots(**kwargs)
+    f, ax = plt.subplots(**kwargs)
     plt.imshow(image)
     ax = plt.gca()
     remove_axis(ax=ax)

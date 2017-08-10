@@ -63,11 +63,16 @@ def data_context(image_col='', image_data=None, image_dir=''):
     >>>    ms.image_grid(data=data)
 
     """
+    set_data_context(
+        image_col=image_col, image_dir=image_dir, image_data=image_data)
+    yield
+    _DATA_CONTEXT.unset_context()
+
+
+def set_data_context(image_col='', image_data=None, image_dir=''):
     global _DATA_CONTEXT
     _DATA_CONTEXT.set_context(
         image_col=image_col, image_dir=image_dir, image_data=image_data)
-    yield _DATA_CONTEXT
-    _DATA_CONTEXT.unset_context()
 
 
 def get_data_context():

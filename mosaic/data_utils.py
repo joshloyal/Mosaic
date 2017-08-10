@@ -31,9 +31,12 @@ def get_variable(data, var):
     elif isinstance(var, np.ndarray):
         var = var
     elif data is not None and var in data:
-        var = data[var]
+        var = data[var].values
     else:
         raise ValueError('Could not find {}.'.format(var))
+
+    if isinstance(var[0], str):
+        var = var.astype(np.unicode)
 
     return var
 
