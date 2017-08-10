@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Image-Vis documentation build configuration file, created by
+# Mosaic documentation build configuration file, created by
 # sphinx-quickstart on Sat Jul 15 21:55:07 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -67,7 +67,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Image-Vis'
+project = 'Mosaic'
 copyright = '2017, Joshua D. Loyal'
 author = 'Joshua D. Loyal'
 
@@ -155,7 +155,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Image-Visdoc'
+htmlhelp_basename = 'Mosaicdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -182,7 +182,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Image-Vis.tex', 'Image-Vis Documentation',
+    (master_doc, 'Mosaic.tex', 'Mosaic Documentation',
      'Joshua D. Loyal', 'manual'),
 ]
 
@@ -192,7 +192,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'image-vis', 'Image-Vis Documentation',
+    (master_doc, 'mosaic', 'Mosaic Documentation',
      [author], 1)
 ]
 
@@ -203,8 +203,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Image-Vis', 'Image-Vis Documentation',
-     author, 'Image-Vis', 'One line description of project.',
+    (master_doc, 'Mosaic', 'Mosaic Documentation',
+     author, 'Mosaic', 'One line description of project.',
      'Miscellaneous'),
 ]
 

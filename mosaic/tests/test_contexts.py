@@ -1,6 +1,6 @@
 import image_vis as ivs
 
-from image_vis import contexts
+from mosaic import contexts
 
 
 def test_image_dir():

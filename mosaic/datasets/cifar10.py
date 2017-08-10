@@ -10,9 +10,9 @@ import numpy as np
 import pandas as pd
 from sklearn.utils import check_random_state
 
-from image_vis import image_io
-from image_vis.datasets.base import get_data_home, ImageDataBundle
-from image_vis.datasets.progress_bar import chunk_read
+from mosaic import image_io
+from mosaic.datasets.base import get_data_home, ImageDataBundle
+from mosaic.datasets.progress_bar import chunk_read
 
 
 HERE = os.path.dirname(os.path.abspath(__file__))

@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import scipy
 
-from image_vis import image_io
-from image_vis import contexts
+from mosaic import image_io
+from mosaic import contexts
 
 
 def get_variable(data, var):
@@ -26,8 +26,11 @@ def get_variable(data, var):
     """
     if isinstance(var, pd.Series):
         var = var.values
-
-    if data is not None and var in data:
+    elif isinstance(var, list):
+        var = np.asarray(var)
+    elif isinstance(var, np.ndarray):
+        var = var
+    elif data is not None and var in data:
         var = data[var]
     else:
         raise ValueError('Could not find {}.'.format(var))

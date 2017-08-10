@@ -23,7 +23,7 @@ class ImageDataBundle(object):
 
 def get_data_home(data_home=None):
     if data_home is None:
-        data_home = os.environ.get('IMAGEVIS_DATA',
+        data_home = os.environ.get('MOSAIC_DATA',
                                    os.path.join('~', 'imagevis_data'))
 
     data_home = os.path.expanduser(data_home)

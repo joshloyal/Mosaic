@@ -1,6 +1,6 @@
-from image_vis.datasets.rothko import fetch_rothko_images
-from image_vis.datasets.mnist import fetch_mnist_images
-from image_vis.datasets.cifar10 import fetch_cifar10_images
+from mosaic.datasets.rothko import fetch_rothko_images
+from mosaic.datasets.mnist import fetch_mnist_images
+from mosaic.datasets.cifar10 import fetch_cifar10_images
 
 
 def load_dataset(name):

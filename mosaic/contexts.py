@@ -58,9 +58,9 @@ def data_context(image_col='', image_data=None, image_dir=''):
 
     Examples
     --------
-    >>> import image_vis as ivs
-    >>> with data_context(image_col='image_path', image_dir='/path/to/images'):
-    >>>    ivs.mosaic_plot(data=data)
+    >>> import mosaic as ms
+    >>> with ms.data_context(image_col='image_path', image_dir='/path/to/images'):
+    >>>    ms.image_grid(data=data)
 
     """
     global _DATA_CONTEXT

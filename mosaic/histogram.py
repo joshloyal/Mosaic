@@ -10,11 +10,11 @@ import seaborn as sns
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from PIL import Image as pil_image
 
-from image_vis import data_utils
-from image_vis import contexts
-from image_vis import image_io
-from image_vis import features
-from image_vis import plots
+from mosaic import data_utils
+from mosaic import contexts
+from mosaic import image_io
+from mosaic import features
+from mosaic import plots
 
 
 __all__ = ['image_histogram']
@@ -26,7 +26,7 @@ def images_to_histogram(images, x, n_bins=None, sort_by=None):
     Parameters
     ----------
     images : listof PIL Images.
-        Images to display in the mosaic plot. All images must be
+        Images to display in the image histogram. All images must be
         the same shape.
 
     x : np.array of shape [n_samples,]

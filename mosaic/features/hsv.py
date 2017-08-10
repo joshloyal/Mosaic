@@ -2,7 +2,7 @@ import numpy as np
 from joblib import Parallel, delayed
 from skimage import color
 
-from image_vis import image_io
+from mosaic import image_io
 
 
 __all__ = ['HSVFeatures', 'extract_hsv_stats']

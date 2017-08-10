@@ -1,4 +1,4 @@
-from image_vis import image_io
+from mosaic import image_io
 
 
 def test_load_image(rgb_image_data):

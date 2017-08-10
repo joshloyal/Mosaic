@@ -5,21 +5,21 @@ from __future__ import unicode_literals
 import numpy as np
 from PIL import Image as pil_image
 
-from image_vis import data_utils
-from image_vis import features
-from image_vis import plots
+from mosaic import data_utils
+from mosaic import features
+from mosaic import plots
 
 
-__all__ = ['mosaic_plot']
+__all__ = ['image_grid']
 
 
-def images_to_mosaic(images):
-    """Create a mosaic plot of images.
+def images_to_grid(images):
+    """Create a grid plot of images.
 
     Parameters
     ----------
     images : listof PIL Images.
-        Images to display in the mosaic plot. All images must be
+        Images to display in the grid plot. All images must be
         the same shape.
 
     Returns
@@ -34,16 +34,16 @@ def images_to_mosaic(images):
 
     image_width, image_height = images[0].size
 
-    # mosaic plot should be sqrt(n_samples) x sqrt(n_samples). If
+    # grid plot should be sqrt(n_samples) x sqrt(n_samples). If
     # n_samples is not a perfect square then we pad with white images.
     table_size = int(np.ceil(np.sqrt(n_samples)))
 
     # create the new image. Hard-code the background color to white
     background_color = (255, 255, 255)
-    mosaic_size = (table_size * image_width, table_size * image_height)
-    mosaic_image = pil_image.new('RGB', mosaic_size, background_color)
+    grid_size = (table_size * image_width, table_size * image_height)
+    grid_image = pil_image.new('RGB', grid_size, background_color)
 
-    # loop through the images and add them to the mosaic plot
+    # loop through the images and add them to the grid plot
     for index, image in enumerate(images):
         row_index = int(index / table_size)
         column_index = index % table_size
@@ -56,24 +56,24 @@ def images_to_mosaic(images):
         bounding_box = (left, upper, right, lower)
 
         try:
-            mosaic_image.paste(image, bounding_box)
+            grid_image.paste(image, bounding_box)
         except ValueError:
             raise ValueError(
                 'Not all images have the same width and height. '
                 'You can force even sizes by setting the `image_size`'
                 'argument to the desired dimensions.')
 
-    return mosaic_image
+    return grid_image
 
 
-def mosaic_plot(images=None,
-                data=None,
-                sort_by=None,
-                image_dir='',
-                image_size=(40, 40),
-                n_jobs=1,
-                **kwargs):
-    """Create a mosaic plot of images.
+def image_grid(images=None,
+               data=None,
+               sort_by=None,
+               image_dir='',
+               image_size=(40, 40),
+               n_jobs=1,
+               **kwargs):
+    """Create a grid of images.
 
     Parameters
     ----------
@@ -115,18 +115,18 @@ def mosaic_plot(images=None,
 
     See Also
     --------
-    distance_grid : Combines a mosaic plot with a :func:`scatter_plot`.
+    distance_grid : Combines an image grid with a :func:`scatter_plot`.
 
     Examples
     --------
 
-    Create a mosaic plot.
+    Create a image grid.
 
-    .. plot:: ../examples/mosaic_plot.py
+    .. plot:: ../examples/image_grid.py
 
-    Create a mosaic plot with custom ordering on MNIST.
+    Create a image grid with custom ordering on MNIST.
 
-    .. plot:: ../examples/mosaic_plot_mnist.py
+    .. plot:: ../examples/image_grid_mnist.py
     """
     images = data_utils.get_images(data, images,
                                    as_image=True,
@@ -143,10 +143,10 @@ def mosaic_plot(images=None,
             sort_by = data_utils.get_variable(data, sort_by)
             images = [images[i] for i in np.argsort(sort_by)]
 
-    mosaic = images_to_mosaic(images)
+    grid = images_to_grid(images)
 
     if 'figsize' in kwargs:
         fig_size = kwargs.pop('figsize')
-        mosaic.thumbnail(fig_size, pil_image.BICUBIC)
+        grid.thumbnail(fig_size, pil_image.BICUBIC)
 
-    return plots.pillow_to_matplotlib(mosaic, **kwargs)
+    return plots.pillow_to_matplotlib(grid, **kwargs)

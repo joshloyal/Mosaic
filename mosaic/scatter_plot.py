@@ -8,11 +8,11 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from matplotlib import pyplot as plt
 import seaborn as sns
 
-from image_vis import data_utils
-from image_vis import contexts
-from image_vis import features
-from image_vis import image_io
-from image_vis import plots
+from mosaic import data_utils
+from mosaic import contexts
+from mosaic import features
+from mosaic import image_io
+from mosaic import plots
 
 
 __all__ = ['scatter_plot']

@@ -10,14 +10,14 @@ from setuptools import setup, find_packages
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 # import ``__veresion__`` from code base
-exec(open(os.path.join(HERE, 'image_vis', 'version.py')).read())
+exec(open(os.path.join(HERE, 'mosaic', 'version.py')).read())
 
 
 with open('requirements.txt') as f:
     INSTALL_REQUIRES = [l.strip() for l in f.readlines() if l]
 
 
-setup(name='image-vis',
+setup(name='mosaic',
       version='0.0.1',
       description='A library for plotting images.',
       author='Joshua D. Loyal',
@@ -28,5 +28,5 @@ setup(name='image-vis',
           'notebooks': ['jupyter>=1.0.0']
       },
       test_require=['pytest', 'pytest-pep8'],
-      keywords='machine learning tensorflow',
+      keywords='plotting',
       )

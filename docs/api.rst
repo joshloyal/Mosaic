@@ -1,26 +1,26 @@
-.. currentmodule:: image_vis
+.. currentmodule:: mosaic
 
 API Reference
 =============
 
-Mosaic Plots
-------------
+Image Grids
+-----------
 .. autosummary::
    :toctree: generated/
 
-   mosaic_plot
+   image_grid
    distance_grid
 
-Continous Plots
----------------
+Continous Data
+--------------
 .. autosummary::
    :toctree: generated/
 
    image_histogram
    scatter_plot
 
-Categorical Plots
------------------
+Categorical Data
+----------------
 .. autosummary::
    :toctree: generated/
 

@@ -7,9 +7,9 @@ import seaborn as sns
 
 from matplotlib import pyplot as plt
 
-from image_vis import data_utils
-from image_vis import features
-from image_vis import plots
+from mosaic import data_utils
+from mosaic import features
+from mosaic import plots
 
 
 __all__ = ['image_barplot']

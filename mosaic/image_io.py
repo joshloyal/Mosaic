@@ -14,8 +14,8 @@ import skimage
 from joblib import Parallel, delayed
 from PIL import Image as pil_image
 
-from image_vis import contexts
-from image_vis import features as feature_lib
+from mosaic import contexts
+from mosaic import features as feature_lib
 
 
 image_extensions = {'jpg', 'jpeg', 'png'}

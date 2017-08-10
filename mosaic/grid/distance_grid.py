@@ -6,18 +6,18 @@ import numpy as np
 import sklearn.metrics as metrics
 import seaborn as sns
 
-from image_vis import features
-from image_vis import contexts
-from image_vis import image_io
-from image_vis import plots
-from image_vis import data_utils
-from image_vis.mosaic import images_to_mosaic
+from mosaic import features
+from mosaic import contexts
+from mosaic import image_io
+from mosaic import plots
+from mosaic import data_utils
+from mosaic.grid.image_grid import images_to_grid
 
 
 __all__ = ['distance_grid']
 
 
-def images_to_grid(images, x_var, y_var, **kwargs):
+def images_to_distance_grid(images, x_var, y_var, **kwargs):
     """Creates a grid plot.
 
     Parameters
@@ -58,7 +58,7 @@ def images_to_grid(images, x_var, y_var, **kwargs):
         dist[:, index] = np.inf  # set to inf so we don't pick this point again
     images = [images[index] for index in image_order]
 
-    grid = images_to_mosaic(images)
+    grid = images_to_grid(images)
     return plots.pillow_to_matplotlib(grid, **kwargs)
 
 
@@ -140,4 +140,4 @@ def distance_grid(x, y,
             image_size=image_size,
             n_jobs=n_jobs)
 
-    return images_to_grid(images, x_var, y_var, **kwargs)
+    return images_to_distance_grid(images, x_var, y_var, **kwargs)
