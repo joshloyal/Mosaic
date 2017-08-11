@@ -5,7 +5,7 @@ from skimage import color
 from mosaic import image_io
 
 
-__all__ = ['HSVFeatures', 'extract_hsv_stats']
+__all__ = ['HSVFeatures', 'HUE', 'SATURATION', 'VALUE', 'extract_hsv_stats']
 
 
 class HSVFeatures(object):
@@ -31,6 +31,12 @@ class HSVFeatures(object):
     @classmethod
     def feature_index(cls, value):
         return cls.index_map[value]
+
+
+# Expose the enums
+HUE = HSVFeatures.HUE
+SATURATION = HSVFeatures.SATURATION
+VALUE = HSVFeatures.VALUE
 
 
 def hsv_features_single(image, agg_func=np.mean, background=None):

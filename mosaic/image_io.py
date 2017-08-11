@@ -109,10 +109,14 @@ def to_pillow_image(img_array, image_size=None):
     #if not np.issubdtype(img_array.dtype, np.unsignedinteger):
     #    raise ValueError('Array is not an unsigned int. '
     #                     'Cannot convert to a pillow image.')
+    if isinstance(image_size, (numbers.Integral, np.integer)):
+        image_size = (image_size, image_size)
+
     img_array = skimage.img_as_ubyte(img_array)
     img = pil_image.fromarray(img_array)
     if image_size:
         img = img.resize((image_size[1], image_size[0]), pil_image.LANCZOS)
+
     return img
 
 

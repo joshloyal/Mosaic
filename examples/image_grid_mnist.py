@@ -1,6 +1,6 @@
 """
-Mosaic Plot Orderd by Column
-============================
+Image Grid Orderd by Column
+===========================
 """
 import mosaic as ms
 

@@ -9,7 +9,7 @@ Image Grids
    :toctree: generated/
 
    image_grid
-   distance_grid
+   scatter_grid
 
 Continous Data
 --------------

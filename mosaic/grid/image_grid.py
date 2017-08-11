@@ -46,8 +46,9 @@ def images_to_grid(images, padding=None):
 
     # create the new image. Hard-code the background color to white
     background_color = (255, 255, 255)
-    grid_size = (table_size * (image_width + 2 * padding),
-                 table_size * (image_height + 2 * padding))
+
+    grid_size = (table_size * image_width + (table_size - 1) * padding,
+                 table_size * image_height + (table_size - 1) * padding)
     grid_image = pil_image.new('RGB', grid_size, background_color)
 
     # loop through the images and add them to the grid plot
