@@ -24,7 +24,7 @@
 
     </style>
 
-Mosaic: image data visualization
+mosaic: image data visualization
 ================================
 
 .. toctree::
