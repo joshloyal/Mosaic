@@ -13,7 +13,7 @@ from mosaic import plots
 __all__ = ['image_grid']
 
 
-def images_to_grid(images):
+def images_to_grid(images, padding=None):
     """Create a grid plot of images.
 
     Parameters
@@ -21,6 +21,9 @@ def images_to_grid(images):
     images : listof PIL Images.
         Images to display in the grid plot. All images must be
         the same shape.
+
+    padding : int, optional
+        The padding between images in the grid.
 
     Returns
     -------
@@ -32,6 +35,9 @@ def images_to_grid(images):
     if n_samples < 1:
         raise ValueError('Cannot create a sprite image from zero images.')
 
+    if padding is None:
+        padding = 0
+
     image_width, image_height = images[0].size
 
     # grid plot should be sqrt(n_samples) x sqrt(n_samples). If
@@ -40,7 +46,8 @@ def images_to_grid(images):
 
     # create the new image. Hard-code the background color to white
     background_color = (255, 255, 255)
-    grid_size = (table_size * image_width, table_size * image_height)
+    grid_size = (table_size * (image_width + 2 * padding),
+                 table_size * (image_height + 2 * padding))
     grid_image = pil_image.new('RGB', grid_size, background_color)
 
     # loop through the images and add them to the grid plot
@@ -49,9 +56,9 @@ def images_to_grid(images):
         column_index = index % table_size
 
         # determine the bounding box of the image (where it is)
-        left = column_index * image_width
+        left = column_index * (image_width + padding)
         right = left + image_width
-        upper = row_index * image_height
+        upper = row_index * (image_height + padding)
         lower = upper + image_height
         bounding_box = (left, upper, right, lower)
 
@@ -70,7 +77,8 @@ def image_grid(images=None,
                data=None,
                sort_by=None,
                image_dir='',
-               image_size=(40, 40),
+               image_size=40,
+               padding=None,
                n_jobs=1,
                **kwargs):
     """Create a grid of images.
@@ -99,6 +107,9 @@ def image_grid(images=None,
         will be sampled to `image_size` if the size of the images
         do not match `image_size`.
 
+    padding : int, optional
+        The padding between images in the grid.
+
     n_jobs : int, optional
         The number of parallel workers to use for loading
         the image files when reading from disk. The default
@@ -115,7 +126,7 @@ def image_grid(images=None,
 
     See Also
     --------
-    distance_grid : Combines an image grid with a :func:`scatter_plot`.
+    scatter_grid : Combines an image grid with a :func:`scatter_plot`.
 
     Examples
     --------
@@ -143,6 +154,6 @@ def image_grid(images=None,
             sort_by = data_utils.get_variable(data, sort_by)
             images = [images[i] for i in np.argsort(sort_by)]
 
-    grid = images_to_grid(images)
+    grid = images_to_grid(images, padding=padding)
 
     return plots.pillow_to_matplotlib(grid, **kwargs)

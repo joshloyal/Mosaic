@@ -14,11 +14,11 @@ from mosaic import data_utils
 from mosaic.grid.image_grid import images_to_grid
 
 
-__all__ = ['distance_grid']
+__all__ = ['scatter_grid']
 
 
-def images_to_distance_grid(images, x_var, y_var, **kwargs):
-    """Creates a grid plot.
+def images_to_scatter_grid(images, x_var, y_var, padding=None, **kwargs):
+    """Creates a grid plot from a scatter plot.
 
     Parameters
     ----------
@@ -31,6 +31,9 @@ def images_to_distance_grid(images, x_var, y_var, **kwargs):
 
     y_var : np.array of shape [n_samples,]
         The y-coordinate in euclidean space.
+
+    padding : int, optional
+        The padding between images in the grid.
 
     Returns
     -------
@@ -58,16 +61,17 @@ def images_to_distance_grid(images, x_var, y_var, **kwargs):
         dist[:, index] = np.inf  # set to inf so we don't pick this point again
     images = [images[index] for index in image_order]
 
-    grid = images_to_grid(images)
+    grid = images_to_grid(images, padding=padding)
     return plots.pillow_to_matplotlib(grid, **kwargs)
 
 
-def distance_grid(x, y,
+def scatter_grid(x, y,
                   images=None,
                   data=None,
                   hue=None,
                   image_dir='',
-                  image_size=(20, 20),
+                  image_size=20,
+                  padding=None,
                   n_jobs=1,
                   **kwargs):
     """Draw a plot ordering images in a regularly spaced 2-d grid
@@ -98,6 +102,9 @@ def distance_grid(x, y,
     image_size : int
         The size of each image in the scatter plot.
 
+    padding : int, optional
+        The padding between images in the grid.
+
     n_jobs : int (default=1)
         The number of parallel workers to use for loading
         the image files.
@@ -111,7 +118,7 @@ def distance_grid(x, y,
 
     Create a grid plot with hue labels.
 
-    .. plot:: ../examples/distance_grid.py
+    .. plot:: ../examples/scatter_grid.py
     """
     x_var = data_utils.get_variable(data, x)
     y_var = data_utils.get_variable(data, y)
@@ -140,4 +147,4 @@ def distance_grid(x, y,
             image_size=image_size,
             n_jobs=n_jobs)
 
-    return images_to_distance_grid(images, x_var, y_var, **kwargs)
+    return images_to_scatter_grid(images, x_var, y_var, padding=padding, **kwargs)

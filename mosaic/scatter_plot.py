@@ -47,12 +47,9 @@ def images_to_scatter(images, x, y, threshold=None, alpha=0.9,
         Returns the Axes object with the plot for further tweaking.
     """
     # scale the variables between 0-1
-    #features.minmax_scale(x)
-    #features.minmax_scale(y)
     xy = np.c_[x, y]
 
     fig, ax = plt.subplots(**kwargs)
-    #ax = plt.gca()
 
     # something big. points lie in [0, 1] x [0, 1].
     shown_points = np.array([[np.inf, np.inf]])
