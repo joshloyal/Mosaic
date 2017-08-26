@@ -103,12 +103,6 @@ def sample_images(images, n_samples, seed=123):
 def to_pillow_image(img_array, image_size=None):
     """Convert an image represented as a numpy array back into a
     Pillow Image object."""
-    #if np.issubdtype(img_array.dtype, np.float):
-    #    img_array = (255. * img_array / np.max(img_array)).astype(np.uint8)
-
-    #if not np.issubdtype(img_array.dtype, np.unsignedinteger):
-    #    raise ValueError('Array is not an unsigned int. '
-    #                     'Cannot convert to a pillow image.')
     if isinstance(image_size, (numbers.Integral, np.integer)):
         image_size = (image_size, image_size)
 

@@ -27,6 +27,10 @@ def color_image(img, hue=[1, 0, 0], alpha=0.6):
     A numpy array with the same shape as image, but colorized
     appropriately.
     """
+    # coloring needs the image to be rgb
+    if len(img.shape) < 3:
+        img = color.gray2rgb(img)
+
     # mask of color to super-impose
     color_mask = np.zeros_like(img).astype(np.float32)
     color_mask[:, :] = hue

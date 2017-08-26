@@ -117,7 +117,7 @@ def image_histogram(x,
                     n_bins=None,
                     sort_by=features.HSVFeatures.SATURATION,
                     image_dir='',
-                    image_size=(20, 20),
+                    image_size=None,
                     n_jobs=1,
                     **kwargs):
     """Create an univariate image histogram binned by the `x`

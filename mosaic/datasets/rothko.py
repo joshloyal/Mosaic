@@ -9,12 +9,12 @@ import numpy as np
 from sklearn.utils import check_random_state
 
 from mosaic import image_io
-from mosaic.datasets.base import get_data_home, ImageDataBundle
+from mosaic.datasets.base import get_data_home, get_bucket, ImageDataBundle
 from mosaic.datasets.progress_bar import chunk_read
 
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-URL = "https://s3.amazonaws.com/image-vis/rothko_images.tar.gz"
+URL = get_bucket("rothko_images.tar.gz")
 ARCHIVE_NAME = "rothko_images.tar.gz"
 DATA_NAME = "rothko_images"
 

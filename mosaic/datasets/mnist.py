@@ -10,14 +10,15 @@ import pandas as pd
 from sklearn.utils import check_random_state
 
 from mosaic import image_io
-from mosaic.datasets.base import get_data_home, ImageDataBundle
+from mosaic.datasets.base import get_data_home, get_bucket, ImageDataBundle
 from mosaic.datasets.progress_bar import chunk_read
 
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-URL = "https://s3.amazonaws.com/image-vis/mnist.tar.gz"
+URL = get_bucket("mnist.tar.gz")
 ARCHIVE_NAME = "mnist.tar.gz"
 DATA_NAME = "mnist"
+
 
 def download_mnist_images(target_dir):
     archive_path = os.path.join(target_dir, ARCHIVE_NAME)

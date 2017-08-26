@@ -3,6 +3,9 @@ import os
 import numpy as np
 
 
+MOSAIC_BUCKET = "https://s3.amazonaws.com/mosaic-example-data/"
+
+
 class ImageDataBundle(object):
     def __init__(self, image_dir, image_files, target=None):
         self.image_dir = image_dir
@@ -31,3 +34,7 @@ def get_data_home(data_home=None):
         os.makedirs(data_home)
 
     return data_home
+
+
+def get_bucket(file_name):
+    return MOSAIC_BUCKET + file_name

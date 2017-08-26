@@ -87,6 +87,7 @@ def get_images(data, images,
         elif image_size:
             return np.asarray([scipy.misc.imresize(img, image_size, interp='lanczos') for
                     img in images])
+        return images
 
     if not image_dir:
         image_dir = contexts.get_image_dir()

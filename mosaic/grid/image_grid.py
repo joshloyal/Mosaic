@@ -78,7 +78,7 @@ def image_grid(images=None,
                data=None,
                sort_by=None,
                image_dir='',
-               image_size=40,
+               image_size=None,
                padding=None,
                n_jobs=1,
                **kwargs):

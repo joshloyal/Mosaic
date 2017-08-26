@@ -70,7 +70,7 @@ def scatter_grid(x, y,
                   data=None,
                   hue=None,
                   image_dir='',
-                  image_size=20,
+                  image_size=None,
                   padding=None,
                   n_jobs=1,
                   **kwargs):
