@@ -23,6 +23,10 @@ TEST_LABELS = dict(description='test set labels',
                    filename='t10k-labels-idx1-ubyte.gz')
 
 
+LABELS_MAP = ['t_shirt_top', 'trousers', 'pullover', 'dress',
+              'coat', 'sandal', 'shirt', 'sneaker', 'bag', 'ankle_boot']
+
+
 def download_fashion_mnist(target_dir):
     if not os.path.exists(target_dir):
         os.makedirs(target_dir)
@@ -76,4 +80,4 @@ def fetch_fashion_images(kind='train'):
 
     images, labels = load_fashion(fashion_dir, kind=kind)
 
-    return images, labels
+    return images, np.array([LABELS_MAP[label] for label in labels])
