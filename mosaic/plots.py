@@ -24,3 +24,12 @@ def pillow_to_matplotlib(image, **kwargs):
     ax = plt.gca()
     remove_axis(ax=ax)
     return ax
+
+
+def imshow(img, **kwargs):
+    """Helper function for imshow that uses the appropriate
+    cmap depending if the image is grayscale or not."""
+    if len(img.shape) < 3:
+        plt.imshow(img, cmap='gray', **kwargs)
+    else:
+        plt.imshow(img, **kwargs)

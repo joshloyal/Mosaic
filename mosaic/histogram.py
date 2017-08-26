@@ -100,7 +100,7 @@ def histogram_matplotlib(images, x, n_bins=None, sort_by=None, **kwargs):
         for i, img in enumerate(bin_images):
             bottom = img_height * i
             top = bottom + img_height
-            ax.imshow(img, extent=[left, right, bottom, top], interpolation='lanczos')
+            plots.imshow(img, extent=[left, right, bottom, top], interpolation='lanczos')
             if top > y_max:
                 y_max = top
 

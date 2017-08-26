@@ -70,7 +70,8 @@ def images_to_barplot(images, y, bar_height=30, **kwargs):
 
                 left = img_width * (img_idx + horizontal_padding)
                 right = img_width * (img_idx + horizontal_padding + 1)
-                plt.imshow(img, extent=[left, right, bottom, top])
+
+                plots.imshow(img, extent=[left, right, bottom, top])
 
                 if right > max_width:
                     max_width = right
