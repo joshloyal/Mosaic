@@ -63,6 +63,10 @@ def hsv_features_single(image, agg_func=np.mean, background=None):
         The statistics for each channel (h_mean, s_mean, v_mean).
     """
     image = np.asarray(image, dtype=np.uint8)
+
+    if len(image.shape) < 3:
+        image = color.gray2rgb(image)
+
     hsv_image = color.rgb2hsv(image)
 
     if background is not None:
